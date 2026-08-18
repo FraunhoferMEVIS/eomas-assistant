@@ -36,7 +36,6 @@ class AppSettings(BaseSettings):
     request_timeout_seconds: int = 30
     workflow_max_attempts: int = 3
 
-    imagery_provider: Literal["sentinel_hub_wmts"] = "sentinel_hub_wmts"
     sentinel_hub_wmts_base_url: str = "https://sh.dataspace.copernicus.eu/ogc/wmts"
     sentinel_hub_instance_id: str | None = None
     sentinel_hub_tile_matrix_set: str = "PopularWebMercator256"
@@ -46,7 +45,6 @@ class AppSettings(BaseSettings):
     sentinel_hub_max_zoom: int = 18
     sentinel_hub_tile_size: int = 256
 
-    stac_render_format: Literal["geotiff", "png"] = "geotiff"
     titiler_base_url: str = "http://127.0.0.1:8000"
     stac_cache_root: str = "cache"
 

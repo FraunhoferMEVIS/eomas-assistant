@@ -63,16 +63,11 @@ In order to use the [Copernicus WMTS service](https://documentation.dataspace.co
 
 ```env
 ...
-IMAGERY_PROVIDER=sentinel_hub_wmts
 SENTINEL_HUB_INSTANCE_ID=<your_instance_id>
-SENTINEL_HUB_TILE_MATRIX_SET=PopularWebMercator256
-STAC_RENDER_FORMAT=geotiff
-TITILER_BASE_URL=http://127.0.0.1:8000
 STAC_CACHE_ROOT=cache
 ...
 ```
 
-`STAC_RENDER_FORMAT` controls whether STAC crops are saved as GeoTIFF (recommended for TiTiler) or PNG.
 `STAC_CACHE_ROOT` restricts which local files are allowed to be exposed as map overlays.
 
 #### 4. Start TiTiler (required for STAC frame layers on the map)
@@ -89,7 +84,7 @@ uv sync --all-extras
 tmux new-session -d -s eomas-local
 tmux send-keys -t eomas-local:0.0 'cd /home/hlaue/Developer/git/EOMAS/eomas-assistant && export STAC_CACHE_ROOT=cache && export TITILER_BASE_URL=http://127.0.0.1:8000 && uv run python -m uvicorn eomas_assistant.app.titiler_app:app --host 0.0.0.0 --port 8000' C-m
 tmux split-window -h -t eomas-local:0
-tmux send-keys -t eomas-local:0.1 'cd /home/hlaue/Developer/git/EOMAS/eomas-assistant && export TITILER_BASE_URL=http://127.0.0.1:8000 && export STAC_CACHE_ROOT=cache && export STAC_RENDER_FORMAT=geotiff && uv run streamlit run src/eomas_assistant/app/streamlit_app.py' C-m
+tmux send-keys -t eomas-local:0.1 'cd /home/hlaue/Developer/git/EOMAS/eomas-assistant && export TITILER_BASE_URL=http://127.0.0.1:8000 && export STAC_CACHE_ROOT=cache && uv run streamlit run src/eomas_assistant/app/streamlit_app.py' C-m
 tmux select-layout -t eomas-local:0 even-horizontal
 tmux attach -t eomas-local
 ```

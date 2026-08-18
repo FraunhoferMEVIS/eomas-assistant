@@ -172,13 +172,11 @@ def _render_sidebar(llm_status: dict[str, object]) -> None:
                 "llm_base_url": settings.llm_base_url,
                 "nominatim_base_url": settings.nominatim_base_url,
                 "request_timeout_seconds": settings.request_timeout_seconds,
-                "imagery_provider": settings.imagery_provider,
                 "sentinel_hub_wmts_base_url": settings.sentinel_hub_wmts_base_url,
                 "sentinel_hub_instance_configured": bool(
                     settings.sentinel_hub_instance_id
                 ),
                 "sentinel_hub_tile_matrix_set": settings.sentinel_hub_tile_matrix_set,
-                "stac_render_format": settings.stac_render_format,
                 "titiler_base_url": settings.titiler_base_url,
                 "stac_cache_root": settings.stac_cache_root,
             }
