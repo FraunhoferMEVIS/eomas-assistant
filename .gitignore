@@ -15,3 +15,5 @@ coverage.xml
 .streamlit/secrets.toml
 .DS_Store
 uv.lock
+graph_diagram.mm
+graph_diagram.png

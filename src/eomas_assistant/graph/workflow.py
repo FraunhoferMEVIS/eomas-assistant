@@ -150,6 +150,11 @@ class AgentWorkflow:
             print("saving workflow graph to graph_diagram.png")
             with open("graph_diagram.png", "wb") as f:
                 f.write(png)
+        if False:
+            mm = result.get_graph().draw_mermaid()
+            print("saving workflow graph to graph_diagram.mm")
+            with open("graph_diagram.mm", "w") as f:
+                f.write(mm)
         return result
 
     def _unsupported_node(self, state: AgentState) -> dict:

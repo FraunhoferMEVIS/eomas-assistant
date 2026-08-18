@@ -4,29 +4,19 @@ Extensible multi-agent starter project for Earth Observability requests, built w
 
 - LangGraph for orchestration
 - Python 3.11+
-- Streamlit
-- LLM backend via Ollama server / vLLM
+- Streamlit for the prototype UI
+- LLM backend via vLLM / Ollama server
 - Pydantic validation for agent outputs
+
+This repository is licensed under the [BSD 3-Clause Clear License](LICENSE).
 
 ### LLM
 
-We currently use the [quantized version](https://huggingface.co/jejwalsh/EVE-Instruct-GGUF) (Q8) of [ESA's EVE LLM](https://eve.philab.esa.int/about) (earth virtual expert), served via the [MEVIS Ollama server](https://www.fme.lan/spaces/GEN/pages/255393883/Ollama+Servers) or via the [vLLM backend](https://www.fme.lan/spaces/GEN/pages/284557894/vLLM+Evaluation).
+We currently use the [EVE-Instruct](https://huggingface.co/eve-esa/EVE-Instruct) version of [ESA's EVE LLM](https://eve.philab.esa.int/about) (earth virtual expert, fine-tuned from Mistral-Small-3.2-24B-Instruct-2506), served via a vLLM server hosted in-house (at MEVIS).
 
-## Running on the cluster
+We initially used a [quantized version of EVE](https://huggingface.co/jejwalsh/EVE-Instruct-GGUF) (Q8) in GGUF format, served via [Ollama](https://ollama.com/), but that combination did not support tool calls.
 
-> [!NOTE]
-> The streamlit app is constantly running on nomad:
-> **https://eomas-assistant.cloud.intern.mevis.fraunhofer.de/**
-
-If the service/job should be stopped, you can re-start it via the nomad web UI: https://cassiopeia.cloud.intern.mevis.fraunhofer.de/ui/jobs/eomas-assistant@project-eomas
-
-or using the nomad CLI tool:
-
-```powershell
-$env:NOMAD_ADDR="https://cassiopeia.cloud.intern.mevis.fraunhofer.de"
-$env:NOMAD_TOKEN="..." # has to be refreshed once a week, see https://cassiopeia.cloud.intern.mevis.fraunhofer.de/ui/settings/tokens
-nomad run nomad-job.hcl
-```
+Finally, it is also possible to use other LLMs, but note that the behavior varies between models, and we found that while gpt-5.6-luna 
 
 -----------------
 
@@ -36,7 +26,7 @@ nomad run nomad-job.hcl
 
 - Python 3.11+
 - `uv` installed
-- Ollama/vLLM server reachable from your machine (you have to be in the MEVIS VPN for that)
+- LLM service reachable from your machine
 
 ### Setup
 
@@ -48,51 +38,22 @@ uv sync --all-extras
 
 #### 2. Obtain credentials and keys for public STAC API
 
-Visit https://documentation.dataspace.copernicus.eu/APIs/S3.html for instructions on how to obtain access keys for 
-copernicus S3. Place the keys in `~/.aws/credentials` (On Windows: `C:\Users\<your_user>\.aws\credentials`) with the following content:
-
-```
-[cdse]
-aws_access_key_id=<your_access_token>
-aws_secret_access_key=<your_access_key>
-```
+Visit https://documentation.dataspace.copernicus.eu/APIs/S3.html for instructions on how to obtain access keys for S3 downloads of satellite imagery from the Copernicus Data Space Ecosystem (CDSE).  Set up the environment variables AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY in your `.env` file.  (You can use the `.env.example` file as a template.)
 
 #### 3. Obtain WMTS instance ID
 
-In order to use the [Copernicus WMTS service](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/OGC/WMTS.html), one has to register at [Copernicus Dashboard](https://shapps.dataspace.copernicus.eu/dashboard) and create a configuration (e.g. using the "Full WMS template") in the "configuration utility". Once created, the instance ID can be found under "service endpoints" (see also [this documentation page](https://dataspace.copernicus.eu/news/2024-2-19-integrating-satellite-imagery-web-applications) and this ). This ID has to go into our .env file:
+In order to use the [Copernicus WMTS service](https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/OGC/WMTS.html), one has to register at [Copernicus Dashboard](https://shapps.dataspace.copernicus.eu/dashboard) and create a configuration (e.g. using the "Full WMS template") in the "configuration utility". Once created, the instance ID can be found under "service endpoints" (see also [the respective CDSE documentation](https://dataspace.copernicus.eu/news/2024-2-19-integrating-satellite-imagery-web-applications)). That ID has to go into our .env file:
 
 ```env
 ...
 SENTINEL_HUB_INSTANCE_ID=<your_instance_id>
-STAC_CACHE_ROOT=cache
 ...
 ```
-
-`STAC_CACHE_ROOT` restricts which local files are allowed to be exposed as map overlays.
 
 #### 4. Start TiTiler (required for STAC frame layers on the map)
 
 ```bash
 uv run python -m uvicorn eomas_assistant.app.titiler_app:app --host 0.0.0.0 --port 8000
-```
-
-#### 5. Optional: run TiTiler and Streamlit together in tmux (Linux/macOS)
-
-```bash
-cd /home/hlaue/Developer/git/EOMAS/eomas-assistant
-uv sync --all-extras
-tmux new-session -d -s eomas-local
-tmux send-keys -t eomas-local:0.0 'cd /home/hlaue/Developer/git/EOMAS/eomas-assistant && export STAC_CACHE_ROOT=cache && export TITILER_BASE_URL=http://127.0.0.1:8000 && uv run python -m uvicorn eomas_assistant.app.titiler_app:app --host 0.0.0.0 --port 8000' C-m
-tmux split-window -h -t eomas-local:0
-tmux send-keys -t eomas-local:0.1 'cd /home/hlaue/Developer/git/EOMAS/eomas-assistant && export TITILER_BASE_URL=http://127.0.0.1:8000 && export STAC_CACHE_ROOT=cache && uv run streamlit run src/eomas_assistant/app/streamlit_app.py' C-m
-tmux select-layout -t eomas-local:0 even-horizontal
-tmux attach -t eomas-local
-```
-
-Stop both services:
-
-```bash
-tmux kill-session -t eomas-local
 ```
 
 ### Run the App
@@ -132,44 +93,61 @@ uv run mypy src
 
 ## Architecture Notes
 
+We have initially sketched a multi-agent system architecture for EOMAS, which is
+shown in the following diagram:
 ![Architecture](architecture.png)
+
+Our current implementation is a simplified version of this architecture, and we
+plan to further simplify it towards a single-agent system.  We found that a MAS
+is not a good fit for this use case, where we would have to introduce a lot more
+communication between the agents in order to organize the responsibilities and
+not lose information.  At the time of writing, it may happen that the geography
+agent already hallucinates a response to questions that would actually require
+image processing in a later step, for instance.
 
 ### Workflow Graph
 
 The LangGraph pipeline compiled in `AgentWorkflow._build_graph()` follows this control flow:
 
 ```mermaid
-flowchart TD
-    START([START]) --> ORCH{orchestrator}
-
-    ORCH -->|conversation| CONV[conversation]
-    ORCH -->|geography| GEO[geography]
-    ORCH -->|unsupported| UNSUP[unsupported]
-    ORCH -->|error| ERR[error]
-
-    GEO -->|data_extract| DATAEX[data_extract]
-    GEO -->|done| EVAL{evaluator}
-
-    CONV --> EVAL
-    DATAEX --> DATARET[data_retrieval]
-    DATARET --> EVAL
-    UNSUP --> EVAL
-    ERR --> EVAL
-
-    EVAL -->|approved| END1([END])
-    EVAL -->|retry| ORCH
-    EVAL -->|done| END2([END])
+flowchart TD;
+	__start__([<p>__start__</p>]):::first
+	orchestrator(orchestrator)
+	conversation(conversation)
+	geography(geography)
+	eo_imagery(eo_imagery)
+	eo_imagery_tools(eo_imagery_tools)
+	evaluator(evaluator)
+	unsupported(unsupported)
+	error(error)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> orchestrator;
+	conversation --> evaluator;
+	eo_imagery -. &nbsp;tools&nbsp; .-> eo_imagery_tools;
+	eo_imagery -. &nbsp;done&nbsp; .-> evaluator;
+	eo_imagery_tools --> eo_imagery;
+	error --> evaluator;
+	evaluator -. &nbsp;approved&nbsp; .-> __end__;
+	evaluator -. &nbsp;retry&nbsp; .-> orchestrator;
+	geography -.-> eo_imagery;
+	geography -. &nbsp;done&nbsp; .-> evaluator;
+	orchestrator -.-> conversation;
+	orchestrator -.-> error;
+	orchestrator -.-> geography;
+	orchestrator -.-> unsupported;
+	unsupported --> evaluator;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc
 ```
 
-The state passed through the graph is centered on the user query plus incremental agent outputs:
+### State
 
-- `orchestrator` creates the plan to answer the user request and routes the request to a fitting agent
-- `geography` writes the user-facing response and, when successful, the resolved `geo_location`.
-- `data_extract` derives a `DataRetrievalRequest` from the original user query.
-- `data_download` combines `geo_location` and `data_request`, downloads EO assets, and appends the resulting image metadata to the response.
+The state passed through the graph comprises the user query, message history, and incremental agent outputs:
 
-### Agent Overview
-
-- **Orchestrator** agent: classifies each request into one of the routes `geography`, `unsupported`, or `error`, including a reason and confidence score.
-- **Geography** agent: extracts the requested place and time range from the user query, resolves the place via Nominatim, and returns text plus map output. It also enriches state with a resolved `geo_location`, including `bbox_wgs84_lat_lon` and `time_range`.
-- **Data** agent: takes the original query together with the resolved geographic context, extracts EO retrieval parameters, and downloads matching EO assets for the derived spatial and temporal window.
+- The `OrchestratorAgent` creates the `plan` to answer the user request and routes the request to a fitting agent.
+- The `GeographyAgent` writes the user-facing response and, when successful, the resolved `geo_location`.
+- The `EOImageryAgent` creates a `AssetCatalog` with the STAC information based on the above request analysis.
+- Then, it creates a `DataRequest` with the necessary information for the WMTS imagery overlay.
+- Several agents may augment the `response` with things (text, map, tabular information for plotting etc.) to be rendered in the UI.
+- The `EvaluatorAgent` is responsible for the `evaluation` part of the state, which is used to determine whether the request has been successfully answered or whether it should be re-routed.
