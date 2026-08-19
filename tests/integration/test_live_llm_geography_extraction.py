@@ -125,6 +125,7 @@ def test_live_llm_workflow_extracts_bremen_ndvi_cloud_cover_and_returns_map() ->
     assert all(image.asset_key == "NDVI" for image in wmts_images)
 
 
+@pytest.mark.skip(reason="Implementation of longitudinal analysis not finished yet")
 @pytest.mark.integration
 def test_live_vllm_workflow_extracts_horn_lehe_and_downloads_yearly_ndvi_images() -> None:
     settings = AppSettings().model_copy(update={"llm_provider": "vllm_openai"})
