@@ -125,6 +125,36 @@ def test_live_llm_workflow_extracts_bremen_ndvi_cloud_cover_and_returns_map() ->
     assert all(image.asset_key == "NDVI" for image in wmts_images)
 
 
+@pytest.mark.integration
+def test_live_vllm_workflow_computes_mean_ndvi_of_oldenburg() -> None:
+    settings = AppSettings().model_copy(update={"llm_provider": "vllm_openai"})
+    llm_client = create_llm_client(settings)
+    workflow = AgentWorkflow(settings=settings, llm_client=llm_client)
+
+    state = workflow._graph.invoke(
+        workflow._build_initial_state(
+            [
+                HumanMessage(
+                    content="What was the mean NDVI value of oldenburg in last February?"
+                )
+            ],
+        )
+    )
+
+    geo_location = state.get("geo_location")
+    assert geo_location is not None
+    location_text = f"{geo_location.name} {geo_location.display_name}".lower()
+    assert "oldenburg" in location_text
+    assert "lower saxony" in location_text
+
+    response = state.get("response")
+    assert response is not None
+
+    stac_images = response.metadata.get("stac_images")
+    assert isinstance(stac_images, list)
+    assert len(stac_images) >= 10
+
+
 @pytest.mark.skip(reason="Implementation of longitudinal analysis not finished yet")
 @pytest.mark.integration
 def test_live_vllm_workflow_extracts_horn_lehe_and_downloads_yearly_ndvi_images() -> None:
