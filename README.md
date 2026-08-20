@@ -16,7 +16,7 @@ We currently use the [EVE-Instruct](https://huggingface.co/eve-esa/EVE-Instruct)
 
 We initially used a [quantized version of EVE](https://huggingface.co/jejwalsh/EVE-Instruct-GGUF) (Q8) in GGUF format, served via [Ollama](https://ollama.com/), but that combination did not support tool calls.
 
-Finally, it is also possible to use other LLMs, but note that the behavior varies between models, and we found that while gpt-5.6-luna 
+Finally, it is also possible to use other LLMs, but note that the behavior varies between models.  For instance, we found that while gpt-5.6-luna often makes better (more consistent) use of the provided tools, the geography extraction is less reliable than with EVE-Instruct with the same prompt (which was developed for EVE).
 
 -----------------
 
