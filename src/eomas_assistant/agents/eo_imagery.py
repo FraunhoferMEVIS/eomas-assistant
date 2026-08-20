@@ -34,6 +34,9 @@ from eomas_assistant.tools.find_available_satellite_data import (
     format_acquisition_date,
 )
 from eomas_assistant.tools.geography import ensure_minimal_bbox_span
+from eomas_assistant.tools.image_processing import (
+    compute_roi_statistics as _compute_roi_statistics,
+)
 from eomas_assistant.tools.wmts_retrieval import (
     construct_tiled_eo_image_with_wmts_metadata,
     request_available_wmts_layers,
@@ -300,8 +303,6 @@ def compute_roi_statistics(
     date_items = asset_catalog.available_stac_items_by_date.get(acquisition_date)
     if not date_items:
         raise KeyError(f"No STAC items found for acquisition date {acquisition_date}.")
-
-    from eomas_assistant.tools.image_processing import compute_roi_statistics as _compute_roi_statistics
 
     return _compute_roi_statistics(
         stac_items=date_items,
