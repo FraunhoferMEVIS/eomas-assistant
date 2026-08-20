@@ -135,13 +135,18 @@ class EOImageDownloader:
     def find_assets_by_key(self, items: list[pystac.Item], asset_key: str) -> list[pystac.Asset]:
         """Find specific assets for a list of STAC items."""
 
+        errors = []
+
         result: list[pystac.Asset] = []
         for item in items:
             asset = item.assets.get(asset_key)
             if asset:
                 result.append(asset)
             else:
-                logger.warning(f"No asset with key '{asset_key}' found for item {item.id}")
+                errors.append(item.id)
+
+        if errors:
+            raise KeyError(f"No asset with key '{asset_key}' found for items: {', '.join(errors)}")
 
         return result
 
@@ -153,12 +158,14 @@ class EOImageDownloader:
         In recent Copernicus data, there is a cloud probability asset with key
         'CLD' which is then used.  Alternatively, the scene classification layer
         (SCL) is be used to derive cloud probability, but this is less accurate.
+
+        If neither CLD_20m nor SCL_20m assets are available, a KeyError is raised.
         """
 
-        cld_assets = self.find_assets_by_key(stac_items, "CLD_20m")
-        if cld_assets:
+        try:
+            cld_assets = self.find_assets_by_key(stac_items, "CLD_20m")
             cld_prob, cld_crs, cld_transform = self.download_and_merge_assets(cld_assets)
-        else:
+        except KeyError:
             scl_assets = self.find_assets_by_key(stac_items, "SCL_20m")
             scl_prob, cld_crs, cld_transform = self.download_and_merge_assets(scl_assets)
 
