@@ -7,7 +7,7 @@ from collections.abc import Sequence
 from langchain.chat_models import BaseChatModel
 from langchain_core.messages import AnyMessage
 
-from eomas_assistant.llm.llm_helper import LLMHelper
+from eomas_assistant.llm import llm_helper
 from eomas_assistant.models.response_models import AgentResponse, TextResponseItem
 from eomas_assistant.graph.state import AgentState
 
@@ -45,12 +45,12 @@ class ConversationAgent:
         """Return a direct plain-text response for general conversation."""
 
         try:
-            llm_input = LLMHelper.build_model_input_messages(
+            llm_input = llm_helper.build_model_input_messages(
                 system_prompt=SYSTEM_PROMPT,
                 messages=messages,
             )
             payload = self._llm_client.invoke(input=llm_input)
-            content = LLMHelper.get_plain_text(payload)
+            content = llm_helper.get_plain_text(payload)
         except Exception:
             content = None
 

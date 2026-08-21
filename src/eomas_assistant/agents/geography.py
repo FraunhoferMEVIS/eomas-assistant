@@ -12,7 +12,7 @@ from pydantic import Field
 from langchain.chat_models import BaseChatModel
 from langchain_core.messages import AnyMessage
 
-from eomas_assistant.llm.llm_helper import LLMHelper
+from eomas_assistant.llm import llm_helper
 from eomas_assistant.graph.state import AgentState
 from eomas_assistant.models.response_models import (
     AgentResponse,
@@ -116,7 +116,7 @@ class GeographyAgent:
     ) -> tuple[AgentResponse, GeoLocation | None]:
         """Execute geography workflow and return response plus extracted geo context."""
 
-        user_query = LLMHelper.get_latest_user_message(messages)
+        user_query = llm_helper.get_latest_user_message(messages)
         logger.debug("GeographyAgent received query: %s", user_query)
         normalized_outputs = outputs or ["text", "map"]
 
@@ -172,7 +172,7 @@ class GeographyAgent:
             return [], None
 
         try:
-            model_output = LLMHelper.call_llm_with_schema(
+            model_output = llm_helper.call_llm_with_schema(
                 llm=self._llm_client,
                 system_prompt=GEOGRAPHY_EXTRACTION_SYSTEM_PROMPT,
                 messages=messages,
@@ -432,7 +432,7 @@ class GeographyAgent:
             "Provide a concise answer suitable for a chat UI."
         )
         try:
-            summary = LLMHelper.call_llm_with_schema(
+            summary = llm_helper.call_llm_with_schema(
                 llm=self._llm_client,
                 system_prompt=GEOGRAPHY_SUMMARY_SYSTEM_PROMPT,
                 messages=messages,

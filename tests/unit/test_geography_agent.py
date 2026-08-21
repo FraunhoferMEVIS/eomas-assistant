@@ -57,7 +57,7 @@ def test_geography_agent_extracts_location_bbox_and_time_range(mocker) -> None:
     )
 
     mocker.patch(
-        "eomas_assistant.agents.geography.LLMHelper.call_llm_with_schema",
+        "eomas_assistant.agents.geography.llm_helper.call_llm_with_schema",
         side_effect=[
             GeographyExtraction(
                 candidates=[user_query, "Bremen, Germany"],
@@ -119,7 +119,7 @@ def test_geography_agent_sets_zoom_from_bbox(mocker) -> None:
     geocoding_tool = mocker.Mock()
     geocoding_tool.geocode.return_value = location
     mocker.patch(
-        "eomas_assistant.agents.geography.LLMHelper.call_llm_with_schema",
+        "eomas_assistant.agents.geography.llm_helper.call_llm_with_schema",
         side_effect=[
             GeographyExtraction(
                 candidates=[user_query],
@@ -151,7 +151,7 @@ def test_geography_agent_uses_point_zoom_without_area_geometry(mocker) -> None:
     geocoding_tool = mocker.Mock()
     geocoding_tool.geocode.return_value = location
     mocker.patch(
-        "eomas_assistant.agents.geography.LLMHelper.call_llm_with_schema",
+        "eomas_assistant.agents.geography.llm_helper.call_llm_with_schema",
         side_effect=[
             GeographyExtraction(
                 candidates=[user_query],
@@ -193,7 +193,7 @@ def test_geography_agent_reuses_prior_location_when_location_missing(mocker) -> 
     geocoding_tool.geocode.return_value = None
 
     mocker.patch(
-        "eomas_assistant.agents.geography.LLMHelper.call_llm_with_schema",
+        "eomas_assistant.agents.geography.llm_helper.call_llm_with_schema",
         side_effect=[
             GeographyExtraction(
                 candidates=[],
@@ -242,7 +242,7 @@ def test_geography_agent_defaults_to_recent_time_range_when_time_missing(mocker)
     geocoding_tool.geocode.return_value = new_location
 
     mocker.patch(
-        "eomas_assistant.agents.geography.LLMHelper.call_llm_with_schema",
+        "eomas_assistant.agents.geography.llm_helper.call_llm_with_schema",
         side_effect=[
             GeographyExtraction(
                 candidates=["Hamburg"],

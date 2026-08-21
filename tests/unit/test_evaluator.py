@@ -23,7 +23,7 @@ def test_evaluator_includes_wmts_and_stac_band_metadata_in_prompt(mocker) -> Non
         )
 
     mocker.patch(
-        "eomas_assistant.agents.evaluator.LLMHelper.call_llm_with_schema",
+        "eomas_assistant.agents.evaluator.llm_helper.call_llm_with_schema",
         side_effect=_fake_call_llm_with_schema,
     )
 
@@ -107,7 +107,7 @@ def test_evaluator_prompt_prioritizes_latest_request_over_older_context(mocker) 
         )
 
     mocker.patch(
-        "eomas_assistant.agents.evaluator.LLMHelper.call_llm_with_schema",
+        "eomas_assistant.agents.evaluator.llm_helper.call_llm_with_schema",
         side_effect=_fake_call_llm_with_schema,
     )
 

@@ -9,7 +9,7 @@ from typing import Any
 from langchain.chat_models import BaseChatModel
 from langchain_core.messages import AnyMessage
 
-from eomas_assistant.llm.llm_helper import LLMHelper
+from eomas_assistant.llm import llm_helper
 from eomas_assistant.models.response_models import AgentResponse, ErrorResponseItem, MapResponseItem, TextResponseItem
 from eomas_assistant.models.schemas import EvaluationResult, OrchestratorPlan
 from eomas_assistant.graph.state import AgentState
@@ -92,7 +92,7 @@ class EvaluatorAgent:
             "Judge adequacy against the latest user message in the conversation above."
         )
         try:
-            return LLMHelper.call_llm_with_schema(
+            return llm_helper.call_llm_with_schema(
                 llm=self._llm_client,
                 system_prompt=SYSTEM_PROMPT,
                 messages=messages,

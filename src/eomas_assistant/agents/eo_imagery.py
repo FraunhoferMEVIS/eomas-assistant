@@ -18,7 +18,7 @@ from langchain.tools import ToolRuntime, tool
 from langgraph.types import Command
 import numpy as np
 
-from eomas_assistant.llm.llm_helper import LLMHelper
+from eomas_assistant.llm import llm_helper
 from eomas_assistant.models.response_models import MapResponseItem
 from eomas_assistant.models.schemas import (
     AssetCatalog,
@@ -382,7 +382,7 @@ class EOImageryAgent:
             else "No WMTS layer is currently selected; the set_selected_wmts_layer tool needs to be called."
         )
         # supplemental_prompt = "Extract EO retrieval parameters from the latest user message in the conversation above."
-        llm_input = LLMHelper.build_model_input_messages(
+        llm_input = llm_helper.build_model_input_messages(
             system_prompt=system_prompt,
             messages=messages,
             supplemental_prompt=supplemental_prompt,

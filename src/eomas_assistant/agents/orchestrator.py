@@ -8,7 +8,7 @@ from collections.abc import Sequence
 from langchain.chat_models import BaseChatModel
 from langchain_core.messages import AnyMessage
 
-from eomas_assistant.llm.llm_helper import LLMHelper
+from eomas_assistant.llm import llm_helper
 from eomas_assistant.models.schemas import (
     EvaluationResult,
     OrchestratorPlan,
@@ -69,7 +69,7 @@ class OrchestratorAgent:
             )
 
         try:
-            plan = LLMHelper.call_llm_with_schema(
+            plan = llm_helper.call_llm_with_schema(
                 llm=self._llm_client,
                 system_prompt=SYSTEM_PROMPT,
                 messages=messages,

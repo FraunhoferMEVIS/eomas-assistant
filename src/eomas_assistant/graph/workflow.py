@@ -18,7 +18,7 @@ from eomas_assistant.agents.orchestrator import OrchestratorAgent
 from eomas_assistant.config.settings import AppSettings, get_settings
 from eomas_assistant.graph.state import AgentState
 from eomas_assistant.graph.workflow_streamer import WorkflowStreamer
-from eomas_assistant.llm.llm_helper import LLMHelper
+from eomas_assistant.llm import llm_helper
 from eomas_assistant.llm import create_llm_client
 from eomas_assistant.models.response_models import AgentResponse, TextResponseItem
 from eomas_assistant.tools.geocoding import Geocoding
@@ -179,7 +179,7 @@ class AgentWorkflow:
             ],
             metadata={
                 "route": "unsupported",
-                "user_query": LLMHelper.get_latest_user_message(state.messages),
+                "user_query": llm_helper.get_latest_user_message(state.messages),
                 "route_reason": routing_reason,
                 "response_source": "static_unsupported_message",
                 "reasoning_trace": [
@@ -205,7 +205,7 @@ class AgentWorkflow:
             ],
             metadata={
                 "route": "error",
-                "user_query": LLMHelper.get_latest_user_message(state.messages),
+                "user_query": llm_helper.get_latest_user_message(state.messages),
                 "error_message": error_message,
                 "response_source": "error_message",
                 "reasoning_trace": [
