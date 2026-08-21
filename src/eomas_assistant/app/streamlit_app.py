@@ -9,8 +9,8 @@ from datetime import UTC, datetime
 from time import perf_counter
 
 import httpx
-from langchain_core.messages import AIMessage, AnyMessage, HumanMessage
 import streamlit as st
+from langchain_core.messages import AIMessage, AnyMessage, HumanMessage
 
 from eomas_assistant.config.settings import get_settings
 from eomas_assistant.graph.workflow import AgentWorkflow
@@ -148,7 +148,8 @@ def _summarize_agent_response(response: AgentResponse) -> str:
             snippets.append(f"Error: {item.message.strip()}")
         elif isinstance(item, MapResponseItem):
             snippets.append(
-                f"Map: {item.title} (center {item.center_latitude:.4f}, {item.center_longitude:.4f})."
+                f"Map: {item.title}"
+                f" (center {item.center_latitude:.4f}, {item.center_longitude:.4f})."
             )
 
     compact = " ".join(snippets)
@@ -249,7 +250,8 @@ def main() -> None:
     _render_chat_history()
 
     user_prompt = st.chat_input(
-        "Ask a geographical question (e.g., Show me Bremen in January 2023 with less than 20% cloud cover in the blue band)"
+        "Ask a geographical question (e.g., Show me Bremen in January 2023"
+        " with less than 20% cloud cover in the blue band)"
     )
     if not user_prompt:
         return

@@ -5,20 +5,16 @@ from __future__ import annotations
 import collections
 import contextlib
 import logging
-import os
 from pathlib import Path, PurePosixPath
-from tempfile import mkstemp
 from urllib.parse import urlparse
 
 import boto3
 import numpy as np
-from typing import Tuple
 import pystac
 import rasterio
-import rasterio.windows
 import rasterio.merge
+import rasterio.windows
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError, ProfileNotFound
-
 
 CACHE_DIR = Path(__file__).resolve().parents[3] / "cache"
 DATA_DIR = Path(__file__).resolve().parents[3] / "data"
@@ -107,7 +103,7 @@ class EOImageDownloader:
 
     def download_and_merge_assets(
         self, assets: list[pystac.Asset]
-    ) -> Tuple[np.ndarray, rasterio.CRS, rasterio.Affine]:
+    ) -> tuple[np.ndarray, rasterio.CRS, rasterio.Affine]:
         """Download multiple STAC assets and merge them into a single image.
         Return merged_data (ndarray), merged_crs (CRS), and merged_transform (Affine)."""
 
@@ -155,7 +151,7 @@ class EOImageDownloader:
     def download_and_merge_cloud_probability(
         self,
         stac_items: list[pystac.Item],
-    ) -> Tuple[np.ndarray, rasterio.CRS, rasterio.Affine]:
+    ) -> tuple[np.ndarray, rasterio.CRS, rasterio.Affine]:
         """Compute the mean cloud probability within a region of interest (ROI).
         In recent Copernicus data, there is a cloud probability asset with key
         'CLD' which is then used.  Alternatively, the scene classification layer

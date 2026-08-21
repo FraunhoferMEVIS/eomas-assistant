@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+import logging
 from collections.abc import Sequence
 from datetime import UTC, datetime
-import logging
 from time import sleep
 from typing import TypeVar
 
@@ -102,7 +102,8 @@ def call_llm_with_schema(
         except Exception as exc:
             retryable = _is_retryable_structured_call_error(exc)
             logger.warning(
-                "Structured LLM call failed (call_site=%s, schema=%s, attempt=%s/%s, retryable=%s, error_type=%s, error=%s)",
+                "Structured LLM call failed (call_site=%s, schema=%s,"
+                " attempt=%s/%s, retryable=%s, error_type=%s, error=%s)",
                 call_site,
                 schema_model.__name__,
                 attempt + 1,

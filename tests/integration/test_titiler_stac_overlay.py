@@ -5,8 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from types import SimpleNamespace
-from urllib.parse import parse_qs, unquote, urlparse
 from unittest.mock import patch
+from urllib.parse import parse_qs, unquote, urlparse
 
 import numpy as np
 import pytest

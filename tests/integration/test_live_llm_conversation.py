@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from langchain_core.messages import HumanMessage
 import pytest
+from langchain_core.messages import HumanMessage
 
 from eomas_assistant.config.settings import AppSettings
 from eomas_assistant.graph.workflow import AgentWorkflow

@@ -68,7 +68,8 @@ async def log_incoming_requests(request: Request, call_next):
     client_host = request.client.host if request.client is not None else "unknown"
     user_agent = request.headers.get("user-agent", "unknown")
     LOGGER.info(
-        "TiTiler request method=%s path=%s query=%s status=%s duration_ms=%.2f client=%s user_agent=%s",
+        "TiTiler request method=%s path=%s query=%s status=%s"
+        " duration_ms=%.2f client=%s user_agent=%s",
         request.method,
         request.url.path,
         request.url.query,

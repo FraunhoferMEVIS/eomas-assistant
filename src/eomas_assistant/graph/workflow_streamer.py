@@ -1,8 +1,9 @@
 # Copyright (c) Fraunhofer MEVIS, Germany. All rights reserved.
 
 from __future__ import annotations
-import logging
+
 import asyncio
+import logging
 from collections.abc import Iterator
 
 from langgraph.graph.state import CompiledStateGraph
@@ -167,7 +168,8 @@ class WorkflowStreamer:
                 return ["EO download did not produce a structured data request."]
             selection_reasons = ", ".join(data_request.selection_reasons)
             return [
-                f"EO download selected asset {data_request.wmts_layer}, cloud coverage: {data_request.max_cloud_cover}.",
+                f"EO download selected asset {data_request.wmts_layer},"
+                f" cloud coverage: {data_request.max_cloud_cover}.",
                 f" Selection reasons: {selection_reasons}",
             ]
 

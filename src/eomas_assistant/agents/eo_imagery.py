@@ -1,23 +1,24 @@
 # Copyright (c) Fraunhofer MEVIS, Germany. All rights reserved.
 
 from __future__ import annotations
-from functools import lru_cache
 
 import traceback
 from collections.abc import Sequence
-from typing import cast
 from datetime import datetime
+from functools import lru_cache
+from typing import cast
 
+import numpy as np
 from langchain.chat_models import BaseChatModel
+from langchain.tools import ToolRuntime, tool
 from langchain_core.messages import (
     AIMessage,
     AnyMessage,
     ToolMessage,
 )
-from langchain.tools import ToolRuntime, tool
 from langgraph.types import Command
-import numpy as np
 
+from eomas_assistant.graph.state import AgentState
 from eomas_assistant.llm import llm_helper
 from eomas_assistant.models.response_models import MapResponseItem
 from eomas_assistant.models.schemas import (
@@ -26,8 +27,6 @@ from eomas_assistant.models.schemas import (
     GeoLocation,
     StacImageCatalogEntry,
 )
-from eomas_assistant.graph.state import AgentState
-from eomas_assistant.tools.rasterize_geojson import rasterize_geojson
 from eomas_assistant.tools.downloader import EOImageDownloader
 from eomas_assistant.tools.find_available_satellite_data import (
     find_sentinel2_assets_in_time_range,
@@ -37,6 +36,7 @@ from eomas_assistant.tools.geography import ensure_minimal_bbox_span
 from eomas_assistant.tools.image_processing import (
     compute_roi_statistics as _compute_roi_statistics,
 )
+from eomas_assistant.tools.rasterize_geojson import rasterize_geojson
 from eomas_assistant.tools.wmts_retrieval import (
     construct_tiled_eo_image_with_wmts_metadata,
     request_available_wmts_layers,
@@ -48,17 +48,23 @@ SYSTEM_PROMPT = (
     "* Based on the chat history, set the maximum cloud coverage. "
     "If the user has not specified otherwise, the maximum acceptable cloud coverage should be 5%.\n"
     # TODO: "most recent" in the given time range is a temporary heuristic
-    "* Choose a date for the imagery, preferring the most recent acceptably cloud-free acquisition. "
-    "Therefore, you should check the available STAC dates and call the compute_cloud_coverage_for_date tool "
+    "* Choose a date for the imagery, preferring the most recent acceptably"
+    " cloud-free acquisition. "
+    "Therefore, you should check the available STAC dates and call the"
+    " compute_cloud_coverage_for_date tool "
     "to find a suitable date.\n"
-    "* Find out which WMTS layer the user wants to see and to select the WMTS layer with the found date using the provided tools. "
+    "* Find out which WMTS layer the user wants to see and to select the WMTS layer"
+    " with the found date using the provided tools. "
     "Default to the TRUE_COLOR layer if the user does not declare a preference.\n"
     "Before selecting a WMTS layer, do not forget to search for a suitably cloud-free date.\n"
     "When asked about statistics of a specific STAC asset, "
     "take into account that the STAC assets have different keys than the WMTS layer names. "
-    "You can use the list_available_stac_asset_keys tool to find out which STAC asset keys are available for the current geo/time query. "
-    "There is also not a one-to-one mapping between all WMTS layers and STAC assets, but many correspond directly, "
-    "and for the others you should use your best judgment to find the most appropriate WMTS layer to use as illustration "
+    "You can use the list_available_stac_asset_keys tool to find out which STAC asset keys"
+    " are available for the current geo/time query. "
+    "There is also not a one-to-one mapping between all WMTS layers and STAC assets,"
+    " but many correspond directly, "
+    "and for the others you should use your best judgment to find the most appropriate"
+    " WMTS layer to use as illustration "
     "while computing statistics for the requested STAC asset key. "
 )
 
@@ -267,7 +273,11 @@ def list_available_stac_asset_keys() -> dict:
             {"key": "TCI_10m", "title": "True color image"},
             {"key": "WVP_10m", "title": "Water vapour (WVP) - 10m"},
         ],
-        "description": "The Sentinel-2 Level-2A Collection 1 product provides orthorectified Surface Reflectance (Bottom-Of-Atmosphere: BOA), with sub-pixel multispectral and multitemporal registration accuracy. Scene Classification (including Clouds and Cloud Shadows), AOT (Aerosol Optical Thickness) and WV (Water Vapour) maps are included in the product.",
+        "description": "The Sentinel-2 Level-2A Collection 1 product provides orthorectified"
+        " Surface Reflectance (Bottom-Of-Atmosphere: BOA), with sub-pixel multispectral and"
+        " multitemporal registration accuracy. Scene Classification (including Clouds and"
+        " Cloud Shadows), AOT (Aerosol Optical Thickness) and WV (Water Vapour) maps"
+        " are included in the product.",
     }
 
 
@@ -370,9 +380,8 @@ class EOImageryAgent:
         supplemental_prompt = (
             f"The WMTS layer currently selected for display is {repr(data_request.wmts_layer)}."
             if data_request
-            else "No WMTS layer is currently selected; the set_selected_wmts_layer tool needs to be called."
+            else "No WMTS layer is currently selected; set_selected_wmts_layer needs to be called."
         )
-        # supplemental_prompt = "Extract EO retrieval parameters from the latest user message in the conversation above."
         llm_input = llm_helper.build_model_input_messages(
             system_prompt=system_prompt,
             messages=messages,

@@ -8,25 +8,33 @@ from collections.abc import Sequence
 from langchain.chat_models import BaseChatModel
 from langchain_core.messages import AnyMessage
 
+from eomas_assistant.graph.state import AgentState
 from eomas_assistant.llm import llm_helper
 from eomas_assistant.models.schemas import (
     EvaluationResult,
     OrchestratorPlan,
 )
-from eomas_assistant.graph.state import AgentState
 
 SYSTEM_PROMPT = (
-    "You are the orchestration agent for an Earth observation assistant, and your responsibility is to assess the *intent* of the user query. "
-    "Return ONLY a JSON object according to the provided schema. "
-    "Use the `conversation` route for greetings, capability questions, general meta-conversation, simple assistant chat, and conceptual Earth observation questions that can be answered directly in text without resolving a location or retrieving imagery. "
-    "Treat the `geography` route as the supported domain route for all Earth observation, "
-    "geospatial, mapping, remote-sensing, satellite-imagery, and geology-adjacent requests, "
-    "including locations, coordinates, bounding boxes, time ranges, NDVI, spectral bands, "
-    "cloud cover, Sentinel imagery, vegetation, land cover, terrain, and map-based follow-up questions. "
-    "When the user primarily wants explanation, discussion, or interpretation, prefer `outputs`=[text]. "
-    "When the user primarily wants a visual result, map display, or imagery layer, prefer `outputs`=[map]. "
+    "You are the orchestration agent for an Earth observation assistant,"
+    " and your responsibility is to assess the *intent* of the user query. "
+    "Use the `conversation` route for greetings, capability questions, general"
+    " meta-conversation, simple assistant chat, and conceptual Earth observation"
+    " questions that can be answered directly in text without resolving a"
+    " location or retrieving imagery. "
+    "Treat the `geography` route as the supported domain route for all Earth observation,"
+    " geospatial, mapping, remote-sensing, satellite-imagery, and geology-adjacent requests, "
+    " including locations, coordinates, bounding boxes, time ranges, NDVI, spectral bands, "
+    " cloud cover, Sentinel imagery, vegetation, land cover, terrain, and map-based"
+    " follow-up questions. "
+    "When the user primarily wants explanation, discussion, or interpretation,"
+    " prefer `outputs`=[text]. "
+    "When the user primarily wants a visual result, map display, or imagery layer,"
+    " prefer `outputs`=[map]. "
     "When the user wants both explanation and visualization, set `outputs`=[text, map]. "
-    "For follow-up questions such as 'Now in NDVI', 'Use the same area in 2021', or 'Show the same scene with less cloud cover', keep `route`=`geography` and use the conversation context to resolve omitted references. "
+    "For follow-up questions such as 'Now in NDVI', 'Use the same area in 2021',"
+    " or 'Show the same scene with less cloud cover', use the conversation"
+    " context to resolve omitted references. "
     "Return `unsupported` only when the current request is clearly outside that domain. "
 )
 

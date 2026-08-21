@@ -3,16 +3,17 @@
 from __future__ import annotations
 
 import base64
-from datetime import timedelta
 import logging
-import requests
-from urllib.parse import quote
 import xml.etree.ElementTree as ET
+from datetime import timedelta
+from urllib.parse import quote
 
-from eomas_assistant.models import GeoLocation
-from eomas_assistant.tools.datetimeconversion import datetime_range_to_str
+import requests
+
 from eomas_assistant.config import AppSettings, get_settings
-from eomas_assistant.models.schemas import TimeRange, DataRequest, TiledEOImage
+from eomas_assistant.models import GeoLocation
+from eomas_assistant.models.schemas import DataRequest, TiledEOImage, TimeRange
+from eomas_assistant.tools.datetimeconversion import datetime_range_to_str
 from eomas_assistant.tools.geography import ensure_minimal_bbox_span
 
 logger = logging.getLogger(__name__)
@@ -137,7 +138,8 @@ def construct_tiled_eo_image_with_wmts_metadata(
 
         logger.info(f"Requested WMTS layer: {data_request.wmts_layer}")
         logger.info(
-            f"Requested WMTS acquisition date: {data_request.acquired_at.isoformat() if data_request.acquired_at else 'None'}"
+            "Requested WMTS acquisition date: "
+            + (data_request.acquired_at.isoformat() if data_request.acquired_at else "None")
         )
 
         start_timepoint = data_request.acquired_at.replace(
@@ -159,7 +161,7 @@ def construct_tiled_eo_image_with_wmts_metadata(
         )
     except Exception as exc:
         # can this happen at all? the URL construction is deterministic and should not fail AFAICS
-        logger.error(f"WMTS image resolution failed", exc_info=exc)
+        logger.error("WMTS image resolution failed", exc_info=exc)
         return None
 
     try:
@@ -174,7 +176,7 @@ def construct_tiled_eo_image_with_wmts_metadata(
             tile_size=settings.sentinel_hub_tile_size,
         )
     except Exception as exc:
-        logger.exception(f"Data response build failed", exc_info=exc)
+        logger.exception("Data response build failed", exc_info=exc)
         return None
 
     return image

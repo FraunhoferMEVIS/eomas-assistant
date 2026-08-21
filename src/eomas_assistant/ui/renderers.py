@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from hashlib import sha256
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 from urllib.parse import quote
 
 import folium
@@ -337,7 +337,7 @@ def _build_map_component_key(
     """Return a stable unique key for a rendered folium component."""
 
     digest = sha256(
-        f"{response.request_id}:{output_index}:{output.title}".encode("utf-8")
+        f"{response.request_id}:{output_index}:{output.title}".encode()
     ).hexdigest()
     return f"map-{digest}"
 

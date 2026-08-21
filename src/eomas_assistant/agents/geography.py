@@ -7,13 +7,13 @@ from collections.abc import Sequence
 from datetime import UTC, datetime, timedelta
 from math import log2
 from typing import Any
-from pydantic import Field
 
 from langchain.chat_models import BaseChatModel
 from langchain_core.messages import AnyMessage
+from pydantic import Field
 
-from eomas_assistant.llm import llm_helper
 from eomas_assistant.graph.state import AgentState
+from eomas_assistant.llm import llm_helper
 from eomas_assistant.models.response_models import (
     AgentResponse,
     ErrorResponseItem,
@@ -36,26 +36,31 @@ logger = logging.getLogger(__name__)
 
 GEOGRAPHY_SUMMARY_SYSTEM_PROMPT = (
     "You are a geography assistant for earth observability workflows. "
-    "Produce a summary that consists of 2-4 concise sentences and includes location and coordinates."
+    "Produce a summary that consists of 2-4 concise sentences"
+    " and includes location and coordinates."
 )
 
 GEOGRAPHY_EXTRACTION_SYSTEM_PROMPT = (
-    "You should extract candidates for geographical locations and a desired time range from earth-observation requests. "
+    "You should extract candidates for geographical locations and a"
+    " desired time range from earth-observation requests. "
     "Return ONLY a JSON object according to the provided schema. "
     "`candidates` must be a list of strings for OpenStreetMap Nominatim geocoding, "
     "ordered with most likely candidates first. "
-    "Do not include non-location parts such as action phrases and temporal filters in `candidates`. "
+    "Do not include non-location parts such as action phrases and"
+    " temporal filters in `candidates`. "
     "If no location is mentioned, return `candidates` as an empty array."
     "\n"
     "Interpret relative time expressions using the provided current date. "
-    "For phrases like 'last N years', return the last N complete calendar years ending with the most recently completed year, "
+    "For phrases like 'last N years', return the last N complete calendar"
+    " years ending with the most recently completed year, "
     "unless the user explicitly asks to include the current partial year. "
     "If the user gives a full date, return the same ISO-8601 UTC date-time in both fields. "
     "If the user gives a month, return the first instant of the month as start_timepoint "
     "and the last instant of the month as end_timepoint. "
     "If the user gives only a year, return January 1st at 00:00:00 UTC as start_timepoint "
     "and December 31st at 23:59:59 UTC as end_timepoint. "
-    "Only if no time information is specified at all, return null for start_timepoint and end_timepoint."
+    "Only if no time information is specified at all, return null"
+    " for start_timepoint and end_timepoint."
     "\n"
     "Do not include explanations."
 )
@@ -92,7 +97,7 @@ class GeographyAgent:
         self._llm_client = llm_client
 
     def __call__(self, state: AgentState) -> dict:
-        """Graph node: extract geographical information (location, time, etc.) from the user query."""
+        """Graph node: extract geographical information (location, time, etc.) from user query."""
 
         plan = state.plan
         response, geo_location = self.run(
@@ -245,11 +250,11 @@ class GeographyAgent:
                 coordinates.extend(self._collect_coordinates(nested))
             return coordinates
 
-        if isinstance(value, (list, tuple)):
+        if isinstance(value, list | tuple):
             if (
                 len(value) >= 2
-                and isinstance(value[0], (int, float))
-                and isinstance(value[1], (int, float))
+                and isinstance(value[0], int | float)
+                and isinstance(value[1], int | float)
             ):
                 return [(float(value[0]), float(value[1]))]
 

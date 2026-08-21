@@ -2,19 +2,20 @@
 
 from __future__ import annotations
 
+from typing import Annotated
+
 from langchain_core.messages import AnyMessage
 from langgraph.graph import add_messages
 from pydantic import Field
-from typing import Annotated
 
 from eomas_assistant.models.response_models import AgentResponse
 from eomas_assistant.models.schemas import (
-    StrictBaseModel,
     AssetCatalog,
     DataRequest,
     EvaluationResult,
     GeoLocation,
     OrchestratorPlan,
+    StrictBaseModel,
 )
 
 

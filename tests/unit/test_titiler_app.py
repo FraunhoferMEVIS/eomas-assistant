@@ -1,7 +1,5 @@
 # Copyright (c) Fraunhofer MEVIS, Germany. All rights reserved.
 
-from __future__ import annotations
-
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -11,8 +9,8 @@ from unittest.mock import patch
 from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
-from eomas_assistant.app.titiler_app import app as titiler_app
 from eomas_assistant.app.titiler_app import _validated_local_dataset_path
+from eomas_assistant.app.titiler_app import app as titiler_app
 
 
 class TestTiTilerPathValidation(unittest.TestCase):

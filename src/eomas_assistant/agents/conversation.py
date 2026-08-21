@@ -7,15 +7,18 @@ from collections.abc import Sequence
 from langchain.chat_models import BaseChatModel
 from langchain_core.messages import AnyMessage
 
+from eomas_assistant.graph.state import AgentState
 from eomas_assistant.llm import llm_helper
 from eomas_assistant.models.response_models import AgentResponse, TextResponseItem
-from eomas_assistant.graph.state import AgentState
 
 SYSTEM_PROMPT = (
     "You are the general conversation agent for an Earth observation assistant. "
     "Respond directly in plain text. "
-    "Handle greetings, short meta questions, capability questions, general chat about the assistant, and conceptual Earth observation questions that can be answered directly in text. "
-    "Examples include defining NDVI, explaining cloud cover filtering, or describing the difference between imagery layers. "
+    "Handle greetings, short meta questions, capability questions, general chat"
+    " about the assistant, and conceptual Earth observation questions that"
+    " can be answered directly in text. "
+    "Examples include defining NDVI, explaining cloud cover filtering, or"
+    " describing the difference between imagery layers. "
     "Do not fabricate geocoding results, imagery availability, or map data. "
     "Keep answers concise and useful."
 )
@@ -55,7 +58,8 @@ class ConversationAgent:
             content = None
 
         if not content:
-            content = "I can help with Earth observation, geospatial questions, and general questions about this assistant."
+            content = "I can help with Earth observation, geospatial"
+            " questions, and general questions about this assistant."
 
         return AgentResponse(
             agent_name="conversation_agent",

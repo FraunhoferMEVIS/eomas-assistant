@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from datetime import date
 
-from langchain_core.messages import HumanMessage
 import pytest
+from langchain_core.messages import HumanMessage
 
 from eomas_assistant.agents.geography import GeographyAgent
 from eomas_assistant.config.settings import AppSettings

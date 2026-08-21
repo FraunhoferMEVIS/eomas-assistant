@@ -1,9 +1,10 @@
 # Copyright (c) Fraunhofer MEVIS, Germany. All rights reserved.
 
-from typing import Any, Tuple
-import rasterio
+from typing import Any
+
 import numpy as np
 import pystac
+import rasterio
 
 from eomas_assistant.tools.downloader import EOImageDownloader
 from eomas_assistant.tools.rasterize_geojson import rasterize_geojson
@@ -12,7 +13,7 @@ from eomas_assistant.tools.rasterize_geojson import rasterize_geojson
 def compute_derived_index(
     stac_items: list[pystac.Item],
     index_name: str,
-) -> Tuple[np.ndarray, rasterio.CRS, rasterio.Affine]:
+) -> tuple[np.ndarray, rasterio.CRS, rasterio.Affine]:
     """Compute a derived index (e.g. NDVI) from the pixel values of the specified
     asset type inside the region of interest for a given acquisition date (in ISO
     8601 YYYY-MM-DD format).
@@ -44,7 +45,7 @@ def compute_derived_index(
                 )
             if result_transform != image_transform:
                 raise ValueError(
-                    f"Transform of asset '{asset_key}' does not match the transform of previous assets."
+                    f"Transform of asset '{asset_key}' does not match the previous transform."
                 )
 
         base_data[asset_key] = image_data

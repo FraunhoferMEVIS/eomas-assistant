@@ -9,6 +9,8 @@ from typing import Any
 from langchain.chat_models import BaseChatModel
 from langchain_core.messages import AnyMessage
 
+from eomas_assistant.graph.state import AgentState
+from eomas_assistant.graph.workflow_streamer import WorkflowStreamer
 from eomas_assistant.llm import llm_helper
 from eomas_assistant.models.response_models import (
     AgentResponse,
@@ -17,27 +19,30 @@ from eomas_assistant.models.response_models import (
     TextResponseItem,
 )
 from eomas_assistant.models.schemas import EvaluationResult, OrchestratorPlan
-from eomas_assistant.graph.state import AgentState
-from eomas_assistant.graph.workflow_streamer import WorkflowStreamer
 
 SYSTEM_PROMPT = (
     "You review whether the assistant's latest output adequately answers the user's request. "
     "Interpret dates relative to the current date given above. "
     "Only judge success against the latest user request shown above. "
-    "Treat older conversation context as background only, and ignore older layer or band requests when they conflict with the latest user request. "
+    "Only older conversation context as background for disambiguation / missing information. "
     "Approve when the current output is a reasonable final answer for the current request. "
     "Evaluate the rendered map and EO imagery evidence, not just the text summary. "
     "rendered_map_eo_image is the tiled EO image actually shown on the map. "
     # "stac_downloaded_images are the STAC frames downloaded as overlays. "
-    "When the user asks for a specific EO layer or band such as NDVI or the red band, confirm that these entries match the request when they are present. "
+    "When the user asks for a specific EO layer or band such as NDVI or the red band,"
+    " confirm that these entries match the request when they are present. "
     "Decide layer compatibility from the raw asset_key and asset_title values. "
-    "You should infer common EO aliases and provider naming conventions yourself, for example WMTS RED can match STAC B04_10m and TRUE_COLOR can match TCI. "
+    "You should infer common EO aliases and provider naming conventions yourself,"
+    " for example WMTS RED can match STAC B04_10m and TRUE_COLOR can match TCI. "
     "Reject outputs that claim the right layer but only show/download mismatched imagery. "
-    "Reject when the output misses the user's main intent, chooses the wrong output mode, or follows an obviously wrong route. "
-    "Set retryable=true only when another orchestration attempt could plausibly improve the result. "
-    "Set retryable=false for already-acceptable outputs, clear out-of-domain requests, or failures that should not loop further. "
-    "The critique must be short and concrete. "
-    "The replanning_instructions must tell the orchestrator what to do differently on the next attempt when approved=false. "
+    "Reject when the output misses the user's main intent, chooses the wrong output mode,"
+    " or follows an obviously wrong route. "
+    "Set retryable=true only when another orchestration attempt could improve the result. "
+    "Set retryable=false for already-acceptable outputs, clear out-of-domain requests,"
+    " or failures that should not loop further. "
+    "The critique must be short and specific. "
+    "The replanning_instructions must tell the orchestrator what to do differently"
+    " on the next attempt when approved=false. "
     "The score must be a number between 0 and 1."
 )
 
@@ -131,7 +136,8 @@ class EvaluatorAgent:
                 map_items.append(item)
                 lines.append(
                     "- map: "
-                    f"title={item.title}, center=({item.center_latitude}, {item.center_longitude}), zoom={item.zoom}"
+                    f"title={item.title}, center=({item.center_latitude},"
+                    f" {item.center_longitude}), zoom={item.zoom}"
                 )
             elif isinstance(item, ErrorResponseItem):
                 compact = " ".join(item.message.split())
