@@ -2,7 +2,6 @@
 
 import unittest
 from datetime import UTC, datetime
-from tempfile import TemporaryDirectory
 from types import SimpleNamespace
 from unittest.mock import patch
 
@@ -20,32 +19,12 @@ from eomas_assistant.models.schemas import (
     BoundingBox,
     DataRequest,
     GeoLocation,
-    LocalEOImage,
     TimeRange,
 )
 from eomas_assistant.tools.downloader import (
     AuthenticationFailed,
     EOImageDownloader,
 )
-
-# PROJECT_ROOT = Path(__file__).resolve().parents[2]
-# DATA_DIR = PROJECT_ROOT / "data"
-
-
-# class TestFallbackHandling(unittest.TestCase):
-#   def test_presence_of_default_image_returns_bremen_window(self):
-#     self.assertEqual(_load_default_eoimage().asset_key, "bremen_window")
-
-#   @skip # temporally disabled since unsure which format the invoke call needs
-#   def test_download_of_image_failing_returns_bremen_window(self):
-#     image = _download_from_sentinel.invoke(
-#       location="Bremen",
-#       bbox_wgs_lat_lon=(8.55, 53.00, 8.95, 53.22),
-#       timepoint="2023-01-01T00:00:00Z/2024-12-31T23:59:59Z"
-#     )
-#     self.assertEqual(
-#       image.asset_key,
-#       "bremen_window")
 
 
 class TestGetAvailableEOImages(unittest.TestCase):
