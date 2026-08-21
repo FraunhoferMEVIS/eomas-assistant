@@ -127,7 +127,7 @@ def test_live_llm_workflow_extracts_bremen_ndvi_cloud_cover_and_returns_map() ->
 
 @pytest.mark.integration
 def test_live_vllm_workflow_computes_mean_ndvi_of_oldenburg() -> None:
-    settings = AppSettings().model_copy(update={"llm_provider": "vllm_openai"})
+    settings = AppSettings().model_copy(update={"llm_provider": "openai_api"})
     llm_client = create_llm_client(settings)
     workflow = AgentWorkflow(settings=settings, llm_client=llm_client)
 
@@ -158,7 +158,7 @@ def test_live_vllm_workflow_computes_mean_ndvi_of_oldenburg() -> None:
 @pytest.mark.skip(reason="Implementation of longitudinal analysis not finished yet")
 @pytest.mark.integration
 def test_live_vllm_workflow_extracts_horn_lehe_and_downloads_yearly_ndvi_images() -> None:
-    settings = AppSettings().model_copy(update={"llm_provider": "vllm_openai"})
+    settings = AppSettings().model_copy(update={"llm_provider": "openai_api"})
     llm_client = create_llm_client(settings)
     workflow = AgentWorkflow(settings=settings, llm_client=llm_client)
 

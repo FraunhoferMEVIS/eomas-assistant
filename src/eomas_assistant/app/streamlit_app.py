@@ -53,8 +53,8 @@ def get_llm_connection_status() -> dict[str, object]:
     verify = ssl.create_default_context(cafile=settings.llm_ca_bundle_path)
 
     headers = {}
-    if settings.vllm_api_key is not None:
-        headers["Authorization"] = f"Bearer {settings.vllm_api_key.get_secret_value()}"
+    if settings.llm_api_key is not None:
+        headers["Authorization"] = f"Bearer {settings.llm_api_key.get_secret_value()}"
 
     started = perf_counter()
     try:

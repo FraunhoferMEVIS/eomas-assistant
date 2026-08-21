@@ -21,13 +21,10 @@ class AppSettings(BaseSettings):
     app_name: str = "EOMAS Assistant"
     debug: bool = False
 
+    llm_provider: Literal["ollama", "openai_api"] = "openai_api"
     llm_model: str = "eve-esa/EVE-Instruct"
-    llm_provider: Literal["ollama", "vllm_openai"] = "vllm_openai"
-
-    vllm_base_url: str = "https://vllm.cloud.intern.mevis.fraunhofer.de/gen/v1"
-    vllm_api_key: SecretStr | None = None
-
-    ollama_base_url: str = "https://ollama.cloud.intern.mevis.fraunhofer.de"
+    llm_api_key: SecretStr | None = None
+    llm_base_url: str = ""
     llm_ca_bundle_path: str | None = None
 
     nominatim_base_url: str = "https://nominatim.openstreetmap.org"
@@ -47,12 +44,6 @@ class AppSettings(BaseSettings):
 
     titiler_base_url: str = "http://127.0.0.1:8000"
     stac_cache_root: str = "cache"
-
-    @property
-    def llm_base_url(self) -> str:
-        if self.llm_provider == "ollama":
-            return self.ollama_base_url
-        return self.vllm_base_url
 
     @model_validator(mode="after")
     def validate_ca_bundle_paths(self) -> AppSettings:
