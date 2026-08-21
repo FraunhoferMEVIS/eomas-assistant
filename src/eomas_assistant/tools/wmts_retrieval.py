@@ -7,7 +7,6 @@ from datetime import timedelta
 import logging
 import requests
 from urllib.parse import quote
-from typing import Optional
 import xml.etree.ElementTree as ET
 
 from eomas_assistant.models import GeoLocation
@@ -119,7 +118,7 @@ def _load_custom_script(filename: str):
 def construct_tiled_eo_image_with_wmts_metadata(
     geo_location: GeoLocation,
     data_request: DataRequest,
-) -> Optional[TiledEOImage]:
+) -> TiledEOImage | None:
     """Resolve tiled EO image metadata using GeoLocation.time_range as temporal input."""
 
     assert geo_location.bbox_wgs84_lat_lon

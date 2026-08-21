@@ -4,7 +4,6 @@ from __future__ import annotations
 import logging
 import asyncio
 from collections.abc import Iterator
-from typing import Optional
 
 from langgraph.graph.state import CompiledStateGraph
 
@@ -132,13 +131,13 @@ class WorkflowStreamer:
         output_state = output if isinstance(output, dict) else {}
 
         if node_name == "orchestrator":
-            plan: Optional[OrchestratorPlan] = output_state.get("plan")
+            plan: OrchestratorPlan | None = output_state.get("plan")
             if plan is None:
                 return ["Routing complete."]
             return [f"Routing complete: {plan.route}."]
 
         elif node_name == "geography":
-            geo_location: Optional[GeoLocation] = output_state.get("geo_location")
+            geo_location: GeoLocation | None = output_state.get("geo_location")
             if geo_location is None:
                 return ["No location was resolved for this request."]
             return [f"Location resolved: {geo_location.display_name}."]
@@ -147,7 +146,7 @@ class WorkflowStreamer:
             return ["Direct response ready."]
 
         elif node_name == "eo_imagery":
-            asset_catalog: Optional[AssetCatalog] = output_state.get("asset_catalog")
+            asset_catalog: AssetCatalog | None = output_state.get("asset_catalog")
             result = []
             if asset_catalog is not None:
                 result.append(
@@ -168,7 +167,7 @@ class WorkflowStreamer:
             return result
 
         elif node_name == "data_download":
-            data_request: Optional[DataRequest] = output_state.get("data_request")
+            data_request: DataRequest | None = output_state.get("data_request")
             if data_request is None:
                 return ["EO download did not produce a structured data request."]
             selection_reasons = ", ".join(data_request.selection_reasons)
@@ -178,7 +177,7 @@ class WorkflowStreamer:
             ]
 
         elif node_name == "evaluator":
-            evaluation: Optional[EvaluationResult] = output_state.get("evaluation")
+            evaluation: EvaluationResult | None = output_state.get("evaluation")
             if evaluation is None:
                 return ["Review complete."]
             if evaluation.approved:

@@ -5,7 +5,7 @@ from functools import lru_cache
 
 import traceback
 from collections.abc import Sequence
-from typing import Optional, cast
+from typing import cast
 from datetime import datetime
 
 from langchain.chat_models import BaseChatModel
@@ -392,7 +392,7 @@ class EOImageryAgent:
     def find_assets(
         self,
         geo_location: GeoLocation,
-        max_cloud_cover: Optional[float] = None,
+        max_cloud_cover: float | None = None,
         max_items: int = 5000,
     ) -> AssetCatalog:
         if geo_location.bbox_wgs84_lat_lon is None:
