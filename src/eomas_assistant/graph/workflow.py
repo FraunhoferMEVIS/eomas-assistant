@@ -58,9 +58,7 @@ class AgentWorkflow:
     ) -> AgentResponse:
         """Run the compiled graph for a message history and return agent output."""
 
-        state = self._graph.invoke(
-            self._build_initial_state(messages)
-        )
+        state = self._graph.invoke(self._build_initial_state(messages))
         response = WorkflowStreamer.extract_response_from_state(state)
         if response is not None:
             return response
@@ -195,14 +193,10 @@ class AgentWorkflow:
         """Graph node: return a server/runtime error message."""
 
         plan = state.plan
-        error_message = (
-            plan.reason if plan is not None else "Unknown orchestrator error"
-        )
+        error_message = plan.reason if plan is not None else "Unknown orchestrator error"
         response = AgentResponse(
             agent_name="orchestrator_agent",
-            items=[
-                TextResponseItem(content=f"A server error occurred: {error_message}")
-            ],
+            items=[TextResponseItem(content=f"A server error occurred: {error_message}")],
             metadata={
                 "route": "error",
                 "user_query": llm_helper.get_latest_user_message(state.messages),

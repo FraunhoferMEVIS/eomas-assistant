@@ -54,9 +54,7 @@ def build_model_input_messages(
     """Build model input from native chat history plus optional task metadata."""
 
     input_messages: list[AnyMessage] = [
-        SystemMessage(
-            content=build_system_prompt_with_current_date(system_prompt)
-        ),
+        SystemMessage(content=build_system_prompt_with_current_date(system_prompt)),
         *list(messages),
     ]
     if supplemental_prompt and supplemental_prompt.strip():
@@ -97,9 +95,9 @@ def call_llm_with_schema(
                 attempt + 1,
                 _MAX_RETRY_ATTEMPTS,
             )
-            payload = llm.with_structured_output(
-                schema_model.model_json_schema()
-            ).invoke(input=llm_input)
+            payload = llm.with_structured_output(schema_model.model_json_schema()).invoke(
+                input=llm_input
+            )
             break
         except Exception as exc:
             retryable = _is_retryable_structured_call_error(exc)
@@ -157,7 +155,9 @@ def _is_retryable_structured_call_error(exc: Exception) -> bool:
 
 def describe_message_content(ai_message: AnyMessage) -> str:
     if isinstance(ai_message, AIMessage) and ai_message.tool_calls:
-        return f"[tool call(s): {', '.join(tool_call['name'] for tool_call in ai_message.tool_calls)}]"
+        return (
+            f"[tool call(s): {', '.join(tool_call['name'] for tool_call in ai_message.tool_calls)}]"
+        )
     return get_plain_text(ai_message) or "[no content]"
 
 

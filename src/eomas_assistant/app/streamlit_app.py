@@ -173,9 +173,7 @@ def _render_sidebar(llm_status: dict[str, object]) -> None:
                 "nominatim_base_url": settings.nominatim_base_url,
                 "request_timeout_seconds": settings.request_timeout_seconds,
                 "sentinel_hub_wmts_base_url": settings.sentinel_hub_wmts_base_url,
-                "sentinel_hub_instance_configured": bool(
-                    settings.sentinel_hub_instance_id
-                ),
+                "sentinel_hub_instance_configured": bool(settings.sentinel_hub_instance_id),
                 "sentinel_hub_tile_matrix_set": settings.sentinel_hub_tile_matrix_set,
                 "titiler_base_url": settings.titiler_base_url,
                 "stac_cache_root": settings.stac_cache_root,
@@ -192,19 +190,13 @@ def _render_sidebar(llm_status: dict[str, object]) -> None:
         st.subheader("Session debug")
         history = st.session_state.chat_history
         user_messages = sum(1 for message in history if message.get("role") == "user")
-        assistant_messages = sum(
-            1 for message in history if message.get("role") == "assistant"
-        )
+        assistant_messages = sum(1 for message in history if message.get("role") == "assistant")
 
         st.metric("Total messages", len(history))
         st.caption(f"User: {user_messages} | Assistant: {assistant_messages}")
 
         last_assistant = next(
-            (
-                message
-                for message in reversed(history)
-                if message.get("role") == "assistant"
-            ),
+            (message for message in reversed(history) if message.get("role") == "assistant"),
             None,
         )
 
@@ -237,9 +229,7 @@ def main() -> None:
 
     st.set_page_config(page_title=settings.app_name, page_icon="🛰️", layout="centered")
     st.title(f"🛰️ {settings.app_name}")
-    st.caption(
-        "Extensible agentic earth observation chat assistant"
-    )
+    st.caption("Extensible agentic earth observation chat assistant")
 
     st.markdown(
         """

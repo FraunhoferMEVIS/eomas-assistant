@@ -30,9 +30,7 @@ def find_sentinel2_assets_in_time_range(
         bbox=list(bbox_wgs84.as_lon_lat_tuple()),
         datetime=datetime_range_to_str(datetime_range),
         query=(
-            {"eo:cloud_cover": {"lt": max_cloud_cover}}
-            if max_cloud_cover is not None
-            else None
+            {"eo:cloud_cover": {"lt": max_cloud_cover}} if max_cloud_cover is not None else None
         ),
         sortby=[{"field": "properties.datetime", "direction": "desc"}],
         limit=min(max_items, 100),

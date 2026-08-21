@@ -18,9 +18,11 @@ def compute_derived_index(
     8601 YYYY-MM-DD format).
     """
 
-    assert index_name == 'NDVI', f"Derived index '{index_name}' is not supported. Only 'NDVI' is currently implemented."
+    assert index_name == "NDVI", (
+        f"Derived index '{index_name}' is not supported. Only 'NDVI' is currently implemented."
+    )
     # NDVI = (MIR - NIR) / (MIR + NIR), with MIR = B12_20m and NIR = B08_20m for Sentinel-2 L2A
-    needed_assets = ['B12_20m', 'B8A_20m']
+    needed_assets = ["B12_20m", "B8A_20m"]
 
     result_crs = None
     result_transform = None
@@ -30,24 +32,26 @@ def compute_derived_index(
     for asset_key in needed_assets:
         assets = downloader.find_assets_by_key(stac_items, asset_key)
 
-        image_data, image_crs, image_transform = downloader.download_and_merge_assets(
-            assets
-        )
+        image_data, image_crs, image_transform = downloader.download_and_merge_assets(assets)
 
         if result_crs is None:
             result_crs = image_crs
             result_transform = image_transform
         else:
             if result_crs != image_crs:
-                raise ValueError(f"CRS of asset '{asset_key}' does not match the CRS of previous assets.")
+                raise ValueError(
+                    f"CRS of asset '{asset_key}' does not match the CRS of previous assets."
+                )
             if result_transform != image_transform:
-                raise ValueError(f"Transform of asset '{asset_key}' does not match the transform of previous assets.")
+                raise ValueError(
+                    f"Transform of asset '{asset_key}' does not match the transform of previous assets."
+                )
 
         base_data[asset_key] = image_data
 
     # TODO: generalize to other indices (requires formula parsing, e.g., based on indexdatabase API)
-    nir_data = base_data['B8A_20m']
-    mir_data = base_data['B12_20m']
+    nir_data = base_data["B8A_20m"]
+    mir_data = base_data["B12_20m"]
 
     # Compute NDVI
     ndvi = (mir_data - nir_data) / (mir_data + nir_data)
@@ -72,9 +76,7 @@ def compute_roi_statistics(
     try:
         assets = downloader.find_assets_by_key(stac_items, stac_asset_key_or_index_name)
 
-        image_data, image_crs, image_transform = downloader.download_and_merge_assets(
-            assets
-        )
+        image_data, image_crs, image_transform = downloader.download_and_merge_assets(assets)
     except KeyError:
         image_data, image_crs, image_transform = compute_derived_index(
             stac_items, stac_asset_key_or_index_name

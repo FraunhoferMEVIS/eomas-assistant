@@ -133,11 +133,7 @@ def test_live_vllm_workflow_computes_mean_ndvi_of_oldenburg() -> None:
 
     state = workflow._graph.invoke(
         workflow._build_initial_state(
-            [
-                HumanMessage(
-                    content="What was the mean NDVI value of oldenburg in last February?"
-                )
-            ],
+            [HumanMessage(content="What was the mean NDVI value of oldenburg in last February?")],
         )
     )
 

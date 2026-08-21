@@ -128,9 +128,7 @@ def set_selected_wmts_layer(
 
     response = runtime.state.response
     if runtime.state.geo_location is not None and response is not None:
-        map_response_items = [
-            item for item in response.items if isinstance(item, MapResponseItem)
-        ]
+        map_response_items = [item for item in response.items if isinstance(item, MapResponseItem)]
         if map_response_items:  # (expected to be exactly one)
             overlay = construct_tiled_eo_image_with_wmts_metadata(
                 geo_location=runtime.state.geo_location,
@@ -213,9 +211,7 @@ def compute_roi_cloud_coverage_for_date(
 
     roi = runtime.state.geo_location.geojson
     if roi is None:
-        raise RuntimeError(
-            "GeoLocation does not contain a GeoJSON in the current state."
-        )
+        raise RuntimeError("GeoLocation does not contain a GeoJSON in the current state.")
 
     date_items = asset_catalog.available_stac_items_by_date.get(acquisition_date)
     if not date_items:
@@ -226,9 +222,7 @@ def compute_roi_cloud_coverage_for_date(
         stac_items=date_items
     )
 
-    roi_mask = rasterize_geojson(
-        roi, cld_crs, cld_transform, cld_prob.shape[-2:], invert=False
-    )
+    roi_mask = rasterize_geojson(roi, cld_crs, cld_transform, cld_prob.shape[-2:], invert=False)
     masked_cld_prob = np.ma.masked_array(cld_prob, mask=roi_mask)
 
     result = float(masked_cld_prob.mean())
@@ -296,9 +290,7 @@ def compute_roi_statistics(
 
     roi = runtime.state.geo_location.geojson
     if roi is None:
-        raise RuntimeError(
-            "GeoLocation does not contain a GeoJSON in the current state."
-        )
+        raise RuntimeError("GeoLocation does not contain a GeoJSON in the current state.")
 
     date_items = asset_catalog.available_stac_items_by_date.get(acquisition_date)
     if not date_items:
@@ -354,8 +346,7 @@ class EOImageryAgent:
                         reasoning_trace=reasoning_trace,
                         # FIXME: remove this table once we have something better
                         available_stac_images=[
-                            item.model_dump()
-                            for item in asset_catalog.available_stac_images
+                            item.model_dump() for item in asset_catalog.available_stac_images
                         ],
                     ),
                 )
@@ -422,9 +413,7 @@ class EOImageryAgent:
         available_keys: set[str] = set()
         for item in items:
             available_keys.update(item.assets.keys())
-            result.available_stac_items_by_date[format_acquisition_date(item)].append(
-                item
-            )
+            result.available_stac_items_by_date[format_acquisition_date(item)].append(item)
         result.available_asset_keys = list(available_keys)
 
         result.available_stac_images = [
@@ -432,16 +421,11 @@ class EOImageryAgent:
                 acquisition_date=acquisition_date,
                 stac_cc=float(
                     np.mean(
-                        [
-                            cast(float, item.properties.get("eo:cloud_cover"))
-                            for item in date_items
-                        ]
+                        [cast(float, item.properties.get("eo:cloud_cover")) for item in date_items]
                     )
                 ),
             )
-            for acquisition_date, date_items in sorted(
-                result.available_stac_items_by_date.items()
-            )
+            for acquisition_date, date_items in sorted(result.available_stac_items_by_date.items())
         ]
 
         return result

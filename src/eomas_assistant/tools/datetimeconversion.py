@@ -12,8 +12,7 @@ from eomas_assistant.models.schemas import TimeRange
 # not reveal this behavior, and it is not clear what the intent of this function
 # is / who's calling it.
 def datetime_range_to_str(time_range: TimeRange | None) -> str:
-    """Convert TimeRange into STAC/WMTS datetime string, using defaults if incomplete.
-    """
+    """Convert TimeRange into STAC/WMTS datetime string, using defaults if incomplete."""
 
     default_range = "2025-01-01T00:00:00Z/2026-12-31T23:59:59Z"
     if time_range is None:

@@ -16,7 +16,6 @@ from eomas_assistant.ui.renderers import (
 
 
 class TestRenderers(unittest.TestCase):
-
     def test_build_stac_rows_and_chart_points_filters_invalid_chart_entries(self) -> None:
         rows, chart_points = _build_stac_table_rows_and_chart_points(
             [
@@ -111,4 +110,3 @@ class TestRenderers(unittest.TestCase):
             outside.write_text("dummy", encoding="ascii")
 
             self.assertFalse(_is_path_within_root(outside, root))
-

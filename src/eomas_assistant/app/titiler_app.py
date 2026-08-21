@@ -29,7 +29,9 @@ def _validated_local_dataset_path(url: Annotated[str, Query(...)]) -> str:
 
     relative_path = Path(requested_path)
     if relative_path.is_absolute():
-        LOGGER.warning("TiTiler path validation failed: absolute path rejected path=%s", requested_path)
+        LOGGER.warning(
+            "TiTiler path validation failed: absolute path rejected path=%s", requested_path
+        )
         raise HTTPException(status_code=400, detail="Dataset path must be relative.")
 
     candidate = (_resolve_cache_root() / relative_path).resolve()
@@ -85,4 +87,3 @@ app.include_router(cog.router, prefix="/cog", tags=["Cloud Optimized GeoTIFF"])
 @app.get("/healthz")
 def healthz() -> dict[str, str]:
     return {"status": "ok"}
-

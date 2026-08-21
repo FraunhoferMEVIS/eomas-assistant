@@ -5,6 +5,7 @@ from langchain_core.messages import AIMessage, HumanMessage
 from eomas_assistant.agents.orchestrator import OrchestratorAgent
 from eomas_assistant.models.schemas import OrchestratorPlan
 
+
 class DummyResponse:
     def __init__(self, content: str) -> None:
         self.content = content
@@ -36,9 +37,7 @@ class DummyChatOllama:
         _ = input
         return DummyResponse(self._answer)
 
-    def with_structured_output(
-        self, json_schema: dict[str, object]
-    ) -> DummyStructuredModel:
+    def with_structured_output(self, json_schema: dict[str, object]) -> DummyStructuredModel:
         _ = json_schema
         return DummyStructuredModel(self._answer, self._error)
 

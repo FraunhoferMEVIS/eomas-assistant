@@ -97,9 +97,7 @@ class GeographyAgent:
         plan = state.plan
         response, geo_location = self.run(
             messages=state.messages,
-            outputs=(
-                plan.expected_response_items if plan is not None else ["text", "map"]
-            ),
+            outputs=(plan.expected_response_items if plan is not None else ["text", "map"]),
             prior_geo_location=state.geo_location,
         )
 
@@ -140,9 +138,7 @@ class GeographyAgent:
 
         if extracted_time_range is not None:
             location.time_range = extracted_time_range
-        elif (
-            prior_geo_location is not None and prior_geo_location.time_range is not None
-        ):
+        elif prior_geo_location is not None and prior_geo_location.time_range is not None:
             location.time_range = prior_geo_location.time_range
 
         location.bbox_wgs84_lat_lon = self._extract_bbox_wgs84(location)
@@ -193,9 +189,7 @@ class GeographyAgent:
                 candidates.append(value)
 
         if model_output.start_timepoint is None:
-            start_timepoint = datetime.now(UTC) - timedelta(
-                days=180
-            )  # default to last 6 months
+            start_timepoint = datetime.now(UTC) - timedelta(days=180)  # default to last 6 months
         else:
             start_timepoint = (
                 model_output.start_timepoint.replace(tzinfo=UTC)
@@ -282,9 +276,7 @@ class GeographyAgent:
         return AgentResponse(
             agent_name="geography_agent",
             items=[
-                ErrorResponseItem(
-                    message=f"No location result found for: {user_query}"
-                ),
+                ErrorResponseItem(message=f"No location result found for: {user_query}"),
                 TextResponseItem(
                     content="I could not find a matching place in OpenStreetMap. "
                     f"Try a more specific location name. Candidates: {', '.join(candidates)}"
@@ -372,9 +364,7 @@ class GeographyAgent:
             geojson=location.geojson,
         )
 
-        rendered_responses: list[
-            TextResponseItem | MapResponseItem | ErrorResponseItem
-        ] = []
+        rendered_responses: list[TextResponseItem | MapResponseItem | ErrorResponseItem] = []
         if "text" in outputs:
             rendered_responses.append(TextResponseItem(content=summary))
         if "map" in outputs:
@@ -399,9 +389,7 @@ class GeographyAgent:
 
         return max(MIN_ZOOM_LEVEL, min(MAX_ZOOM_LEVEL, round(fitted_zoom)))
 
-    def _resolve_location(
-        self, candidates: list[str]
-    ) -> tuple[GeoLocation | None, list[str]]:
+    def _resolve_location(self, candidates: list[str]) -> tuple[GeoLocation | None, list[str]]:
         """Try multiple geocoding candidates and return the first successful match."""
 
         attempts: list[str] = []

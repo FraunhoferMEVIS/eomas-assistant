@@ -16,9 +16,7 @@ def create_ollama_client(settings: AppSettings) -> ChatOllama:
     """Create a configured ChatOllama client according to the settings."""
 
     client_kwargs: dict[str, object] = {"timeout": settings.request_timeout_seconds}
-    client_kwargs["verify"] = ssl.create_default_context(
-        cafile=settings.llm_ca_bundle_path
-    )
+    client_kwargs["verify"] = ssl.create_default_context(cafile=settings.llm_ca_bundle_path)
 
     model = ChatOllama(
         model=settings.llm_model,
@@ -62,6 +60,4 @@ def create_llm_client(settings: AppSettings) -> BaseChatModel:
     if provider == "openai_api":
         return create_openai_client(settings)
 
-    raise ValueError(
-        f"Unsupported LLM_PROVIDER '{provider}'. Use 'ollama' or 'openai_api'."
-    )
+    raise ValueError(f"Unsupported LLM_PROVIDER '{provider}'. Use 'ollama' or 'openai_api'.")

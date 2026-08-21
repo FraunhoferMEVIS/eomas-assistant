@@ -49,9 +49,7 @@ def _rasterize_geometries(
     """Rasterize a list of GeoJSON geometries into a numpy array of boolean
     dtype (True for pixels inside geometries iff invert is True).
     """
-    transformed_geometries = [
-        transform_geom(source_crs, target_crs, geom) for geom in geometries
-    ]
+    transformed_geometries = [transform_geom(source_crs, target_crs, geom) for geom in geometries]
     return geometry_mask(
         transformed_geometries,
         out_shape=target_shape,

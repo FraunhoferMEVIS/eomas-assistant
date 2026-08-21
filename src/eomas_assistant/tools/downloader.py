@@ -105,16 +105,16 @@ class EOImageDownloader:
 
         return local_path
 
-    def download_and_merge_assets(self, assets: list[pystac.Asset]) -> Tuple[np.ndarray, rasterio.CRS, rasterio.Affine]:
+    def download_and_merge_assets(
+        self, assets: list[pystac.Asset]
+    ) -> Tuple[np.ndarray, rasterio.CRS, rasterio.Affine]:
         """Download multiple STAC assets and merge them into a single image.
         Return merged_data (ndarray), merged_crs (CRS), and merged_transform (Affine)."""
 
         if not assets:
             raise ValueError("No assets provided for download and merge.")
 
-        downloaded_paths = [
-            self.download_asset_and_cache_it(asset) for asset in assets
-        ]
+        downloaded_paths = [self.download_asset_and_cache_it(asset) for asset in assets]
         with contextlib.ExitStack() as stack:
             datasets = [stack.enter_context(rasterio.open(path)) for path in downloaded_paths]
 
@@ -122,13 +122,15 @@ class EOImageDownloader:
             logger.debug(f"Merging {len(datasets)} datasets, CRS: {crs}")
 
             if len(crs) > 1:
-                (single_crs, _count), = crs.most_common(1)
-                logger.debug(f"Cannot merge {len(datasets)} datasets, CRS differ: {crs} (selecting {single_crs})")
+                ((single_crs, _count),) = crs.most_common(1)
+                logger.debug(
+                    f"Cannot merge {len(datasets)} datasets, CRS differ: {crs} (selecting {single_crs})"
+                )
                 datasets = [ds for ds in datasets if str(ds.crs) == single_crs]
 
-            #out_fd, out_path = mkstemp(prefix="merged", suffix=".tif", dir=CACHE_DIR)
-            #os.close(out_fd)  # Close the file descriptor; rasterio will handle the file
-            merged_data, merged_transform = rasterio.merge.merge(datasets)  #, dst_path=out_path)
+            # out_fd, out_path = mkstemp(prefix="merged", suffix=".tif", dir=CACHE_DIR)
+            # os.close(out_fd)  # Close the file descriptor; rasterio will handle the file
+            merged_data, merged_transform = rasterio.merge.merge(datasets)  # , dst_path=out_path)
 
         return merged_data, datasets[0].crs, merged_transform
 

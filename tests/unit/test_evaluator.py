@@ -87,8 +87,13 @@ def test_evaluator_includes_wmts_and_stac_band_metadata_in_prompt(mocker) -> Non
     assert len(captured_messages) == 1
     captured_system_prompt = captured.get("system_prompt")
     assert isinstance(captured_system_prompt, str)
-    assert "Decide layer compatibility from the raw asset_key and asset_title values." in captured_system_prompt
-    assert "infer common EO aliases and provider naming conventions yourself" in captured_system_prompt
+    assert (
+        "Decide layer compatibility from the raw asset_key and asset_title values."
+        in captured_system_prompt
+    )
+    assert (
+        "infer common EO aliases and provider naming conventions yourself" in captured_system_prompt
+    )
 
 
 def test_evaluator_prompt_prioritizes_latest_request_over_older_context(mocker) -> None:

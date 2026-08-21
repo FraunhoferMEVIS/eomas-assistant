@@ -10,7 +10,12 @@ from langchain.chat_models import BaseChatModel
 from langchain_core.messages import AnyMessage
 
 from eomas_assistant.llm import llm_helper
-from eomas_assistant.models.response_models import AgentResponse, ErrorResponseItem, MapResponseItem, TextResponseItem
+from eomas_assistant.models.response_models import (
+    AgentResponse,
+    ErrorResponseItem,
+    MapResponseItem,
+    TextResponseItem,
+)
 from eomas_assistant.models.schemas import EvaluationResult, OrchestratorPlan
 from eomas_assistant.graph.state import AgentState
 from eomas_assistant.graph.workflow_streamer import WorkflowStreamer
@@ -23,7 +28,7 @@ SYSTEM_PROMPT = (
     "Approve when the current output is a reasonable final answer for the current request. "
     "Evaluate the rendered map and EO imagery evidence, not just the text summary. "
     "rendered_map_eo_image is the tiled EO image actually shown on the map. "
-    #"stac_downloaded_images are the STAC frames downloaded as overlays. "
+    # "stac_downloaded_images are the STAC frames downloaded as overlays. "
     "When the user asks for a specific EO layer or band such as NDVI or the red band, confirm that these entries match the request when they are present. "
     "Decide layer compatibility from the raw asset_key and asset_title values. "
     "You should infer common EO aliases and provider naming conventions yourself, for example WMTS RED can match STAC B04_10m and TRUE_COLOR can match TCI. "
@@ -67,12 +72,15 @@ class EvaluatorAgent:
         else:
             evaluation_status = "retry_requested"
 
-        return dict(response=dict(
-            evaluation=evaluation.model_dump(),
-            attempt_count=state.attempt_count,
-            max_attempts=state.max_attempts,
-            evaluation_status=evaluation_status,
-        ), evaluation=evaluation)
+        return dict(
+            response=dict(
+                evaluation=evaluation.model_dump(),
+                attempt_count=state.attempt_count,
+                max_attempts=state.max_attempts,
+                evaluation_status=evaluation_status,
+            ),
+            evaluation=evaluation,
+        )
 
     def run(
         self,
@@ -144,7 +152,9 @@ class EvaluatorAgent:
         stac_images = self._image_dicts(metadata.get("stac_images"))
 
         # The map renderer uses the first tiled EO image; STAC frames stay separate overlays.
-        rendered_map_image = next((image for image in eo_images if self._is_tiled_image(image)), None)
+        rendered_map_image = next(
+            (image for image in eo_images if self._is_tiled_image(image)), None
+        )
         return [
             f"- rendered_map_eo_image: {self._json_dump(rendered_map_image)}",
             f"- stac_downloaded_images: {self._json_dump(stac_images)}",

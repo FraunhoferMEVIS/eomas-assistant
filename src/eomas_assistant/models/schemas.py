@@ -18,7 +18,9 @@ class StrictBaseModel(BaseModel):
 
     model_config = ConfigDict(extra="forbid", validate_assignment=True)
 
+
 ### AGENT RESPONSE CLASSES
+
 
 # Output schema for Orchestrator agent
 class OrchestratorPlan(StrictBaseModel):
@@ -34,9 +36,7 @@ class OrchestratorPlan(StrictBaseModel):
         min_length=1,
         description="Requested user-visible outputs for the selected route, in display order.",
     )
-    reason: str = Field(
-        description="Short explanation of why the orchestrator selected this plan."
-    )
+    reason: str = Field(description="Short explanation of why the orchestrator selected this plan.")
     confidence: float = Field(
         ge=0.0,
         le=1.0,
@@ -59,6 +59,7 @@ class OrchestratorPlan(StrictBaseModel):
             raise ValueError("OrchestratorPlan requires at least one output type.")
         object.__setattr__(self, "expected_response_items", deduplicated_outputs)
         return self
+
 
 # Output schema for evaluation agent
 class EvaluationResult(StrictBaseModel):
@@ -145,9 +146,7 @@ class GeoLocation(StrictBaseModel):
     query: str = Field(
         description="Original location phrase or search text that produced this geocoding result."
     )
-    name: str = Field(
-        description="Compact canonical place name used internally by the workflow."
-    )
+    name: str = Field(description="Compact canonical place name used internally by the workflow.")
     latitude: float = Field(
         ge=-90.0,
         le=90.0,
@@ -158,9 +157,7 @@ class GeoLocation(StrictBaseModel):
         le=180.0,
         description="Longitude of the representative point for the resolved location in WGS84.",
     )
-    display_name: str = Field(
-        description="Human-readable geocoder label shown to the user."
-    )
+    display_name: str = Field(description="Human-readable geocoder label shown to the user.")
     geojson: dict[str, Any] | None = Field(
         default=None,
         description="Optional GeoJSON geometry returned by the geocoder for map rendering.",
@@ -177,6 +174,7 @@ class GeoLocation(StrictBaseModel):
         default="OpenStreetMap Nominatim",
         description="Name of the geocoding provider that produced this location result.",
     )
+
 
 class DataRequest(StrictBaseModel):
     """Image parameters for a given location. Used by the data extract node."""
@@ -258,15 +256,11 @@ class BoundingBox(StrictBaseModel):
 class EOImage(StrictBaseModel):
     """Data class for EO images"""
 
-    bbox_wgs84_lat_lon: BoundingBox = Field(
-        description="Image bounding box in WGS84 coordinates."
-    )
+    bbox_wgs84_lat_lon: BoundingBox = Field(description="Image bounding box in WGS84 coordinates.")
     asset_key: str = Field(
         description="Provider-specific asset identifier used to retrieve the imagery."
     )
-    asset_title: str = Field(
-        description="Human-readable asset name shown in the user interface."
-    )
+    asset_title: str = Field(description="Human-readable asset name shown in the user interface.")
     acquired_at: datetime | None = Field(
         default=None,
         description="Acquisition timestamp of the selected scene when available.",
@@ -314,7 +308,5 @@ class TiledEOImage(EOImage):
         has_template = bool(self.tiles_url_template and self.tiles_url_template.strip())
         has_tilejson = bool(self.tilejson_url and self.tilejson_url.strip())
         if not (has_template or has_tilejson):
-            raise ValueError(
-                "TiledEOImage requires either tiles_url_template or tilejson_url."
-            )
+            raise ValueError("TiledEOImage requires either tiles_url_template or tilejson_url.")
         return self

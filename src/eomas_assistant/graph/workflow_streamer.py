@@ -78,9 +78,7 @@ class WorkflowStreamer:
             return response
         return None
 
-    def _extract_response_from_event(
-        self, event: dict[str, object]
-    ) -> AgentResponse | None:
+    def _extract_response_from_event(self, event: dict[str, object]) -> AgentResponse | None:
         """Read a typed response from a LangGraph stream event when available."""
 
         data = event.get("data")
@@ -89,9 +87,7 @@ class WorkflowStreamer:
 
         return self.extract_response_from_state(data.get("output"))
 
-    def _stream_updates_from_event(
-        self, event: dict[str, object]
-    ) -> Iterator[dict[str, object]]:
+    def _stream_updates_from_event(self, event: dict[str, object]) -> Iterator[dict[str, object]]:
         """Translate raw LangGraph events into compact UI status updates."""
 
         event_name = event.get("event")
@@ -159,10 +155,9 @@ class WorkflowStreamer:
             tool_calls = output_state["messages"][0].tool_calls
             if tool_calls:
                 logger.debug(f"Tool calls: {tool_calls}")
-                result.extend([
-                    f"EO imagery agent calls tool {tool_call['name']}"
-                    for tool_call in tool_calls
-                ])
+                result.extend(
+                    [f"EO imagery agent calls tool {tool_call['name']}" for tool_call in tool_calls]
+                )
 
             return result
 

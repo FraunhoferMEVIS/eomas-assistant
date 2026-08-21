@@ -16,7 +16,6 @@ from eomas_assistant.app.titiler_app import _validated_local_dataset_path
 
 
 class TestTiTilerPathValidation(unittest.TestCase):
-
     @patch("eomas_assistant.app.titiler_app.get_settings")
     def test_accepts_file_within_cache_root(self, mock_get_settings) -> None:
         with TemporaryDirectory() as tmp_dir:
@@ -56,7 +55,6 @@ class TestTiTilerPathValidation(unittest.TestCase):
 
 
 class TestTiTilerLogging(unittest.TestCase):
-
     def test_healthz_request_is_logged(self) -> None:
         client = TestClient(titiler_app)
 
@@ -64,7 +62,9 @@ class TestTiTilerLogging(unittest.TestCase):
             response = client.get("/healthz")
 
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(any("TiTiler request method=GET path=/healthz" in line for line in captured.output))
+        self.assertTrue(
+            any("TiTiler request method=GET path=/healthz" in line for line in captured.output)
+        )
 
     @patch("eomas_assistant.app.titiler_app.get_settings")
     def test_blocked_path_is_logged(self, mock_get_settings) -> None:
@@ -86,5 +86,3 @@ class TestTiTilerLogging(unittest.TestCase):
                 any("path=/cog/WebMercatorQuad/tilejson.json" in line for line in captured.output),
                 msg=f"Expected request log in logs, got: {captured.output}",
             )
-
-

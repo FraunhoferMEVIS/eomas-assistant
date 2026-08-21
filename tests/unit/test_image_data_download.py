@@ -28,7 +28,6 @@ from eomas_assistant.tools.downloader import (
 
 
 class TestGetAvailableEOImages(unittest.TestCase):
-
     def test_requesting_eodata_bremen_frame_and_date_returns_list(self):
         imageList = find_sentinel2_assets_in_time_range(
             bbox_wgs84=BoundingBox(
@@ -51,7 +50,6 @@ class TestGetAvailableEOImages(unittest.TestCase):
 
 
 class TestAuthenticationErrors(unittest.TestCase):
-
     @patch(
         "eomas_assistant.tools.downloader.boto3.client",
         side_effect=ProfileNotFound(profile="default"),
@@ -138,14 +136,11 @@ class TestAuthenticationErrors(unittest.TestCase):
 
         self.assertIsNotNone(response)
         assert response is not None  # for linter
-        self.assertEqual(
-            response.acquired_at, datetime(2024, 5, 16, 10, 40, 21, tzinfo=UTC)
-        )
+        self.assertEqual(response.acquired_at, datetime(2024, 5, 16, 10, 40, 21, tzinfo=UTC))
         mock_construct_wmts.assert_called_once()
 
 
 class TestWmtsLayerDiscovery(unittest.TestCase):
-
     def test_request_available_wmts_layers_returns_multiple_layers(self):
         layers = request_available_wmts_layers()
 

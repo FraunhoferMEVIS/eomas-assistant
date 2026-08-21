@@ -195,11 +195,7 @@ def _build_stac_table_rows_and_chart_points(
 def _parse_stac_acquisition_datetime(value: Any) -> datetime | None:
     """Parse ISO-8601 timestamps used by STAC metadata; return None for unknown values."""
 
-    if (
-        not isinstance(value, str)
-        or not value.strip()
-        or value.strip().lower() == "unknown"
-    ):
+    if not isinstance(value, str) or not value.strip() or value.strip().lower() == "unknown":
         return None
 
     normalized = value.strip().replace("Z", "+00:00")
@@ -293,9 +289,7 @@ def _render_map(
     """Render a Leaflet map with optional EO tile overlay and geography layers."""
     map_obj = _build_map(output, response_image, stac_images)
     acquired_at_text = (
-        _format_acquired_at(response_image.acquired_at)
-        if response_image is not None
-        else None
+        _format_acquired_at(response_image.acquired_at) if response_image is not None else None
     )
     if acquired_at_text is not None:
         st.caption(f"WMTS acquisition date: {acquired_at_text}")
@@ -360,9 +354,9 @@ def _build_map(
         tiles="CartoDB positron",
         control_scale=True,
     )
-    Fullscreen(
-        position="topright", title="Fullscreen", title_cancel="Exit Fullscreen"
-    ).add_to(map_obj)
+    Fullscreen(position="topright", title="Fullscreen", title_cancel="Exit Fullscreen").add_to(
+        map_obj
+    )
 
     satellite_layer = _build_satellite_layer(response_image)
     if satellite_layer is not None:
@@ -425,9 +419,7 @@ def _add_image_bbox_outline(map_obj: folium.Map, img: TiledEOImage) -> None:
     ).add_to(map_obj)
 
 
-def _add_stac_frame_layers(
-    map_obj: folium.Map, stac_images: list[LocalEOImage]
-) -> None:
+def _add_stac_frame_layers(map_obj: folium.Map, stac_images: list[LocalEOImage]) -> None:
     """Attach local STAC frame overlays as optional (hidden-by-default) layers."""
 
     for index, image in enumerate(stac_images, start=1):

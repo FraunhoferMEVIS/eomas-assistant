@@ -11,11 +11,7 @@ from streamlit.testing.v1 import AppTest
 @pytest.mark.integration
 def test_live_streamlit_app_accepts_chat_input_and_completes_request() -> None:
     app_path = (
-        Path(__file__).resolve().parents[2]
-        / "src"
-        / "eomas_assistant"
-        / "app"
-        / "streamlit_app.py"
+        Path(__file__).resolve().parents[2] / "src" / "eomas_assistant" / "app" / "streamlit_app.py"
     )
     user_prompt = "show me lyon in april 2020"
 

@@ -7,9 +7,9 @@ from eomas_assistant.agents.geography import GeographyAgent
 from eomas_assistant.agents.orchestrator import OrchestratorAgent
 
 __all__ = [
-	"EOImageryAgent",
-	"ConversationAgent",
-	"EvaluatorAgent",
-	"GeographyAgent",
-	"OrchestratorAgent",
+    "EOImageryAgent",
+    "ConversationAgent",
+    "EvaluatorAgent",
+    "GeographyAgent",
+    "OrchestratorAgent",
 ]

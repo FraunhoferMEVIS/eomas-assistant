@@ -19,16 +19,18 @@ from eomas_assistant.models.schemas import (
 
 
 class AgentState(StrictBaseModel):
-    messages: Annotated[list[AnyMessage], add_messages] = Field(
-        default_factory=list
-    )
+    messages: Annotated[list[AnyMessage], add_messages] = Field(default_factory=list)
 
     attempt_count: int = 0  # Number of orchestration attempts already executed.
-    max_attempts: int = 1  # Hard stop for evaluation-triggered replanning (overwritten from settings).
+    max_attempts: int = (
+        1  # Hard stop for evaluation-triggered replanning (overwritten from settings).
+    )
 
     plan: OrchestratorPlan | None = None  # Full orchestration plan with routing and output plan.
     geo_location: GeoLocation | None = None  # Extracted geo location for data retrieval.
     asset_catalog: AssetCatalog | None = None  # Discovered assets for current geo/time query.
     data_request: DataRequest | None = None  # EO retrieval parameters extracted by data agent.
-    response: Annotated[AgentResponse | None, AgentResponse.modify] = None  # Final agent response returned to the caller.
+    response: Annotated[AgentResponse | None, AgentResponse.modify] = (
+        None  # Final agent response returned to the caller.
+    )
     evaluation: EvaluationResult | None = None  # Review result for the latest workflow output.

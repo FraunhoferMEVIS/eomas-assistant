@@ -34,7 +34,7 @@ def _construct_wmts_gettile_url(
     settings: AppSettings,
     datetime_range: TimeRange,
     layer: str,
-    max_cc: float | None = 100.,  # range 0..100
+    max_cc: float | None = 100.0,  # range 0..100
 ) -> str:
     instance_url = _construct_wmts_instance_url(settings)
 
@@ -83,9 +83,15 @@ def _construct_wmts_gettile_url(
 
 def request_available_wmts_layers() -> dict[str, str]:
     settings = get_settings()
-    requests.get(_construct_wmts_instance_url(settings), params={"SERVICE": "WMTS", "REQUEST": "GetCapabilities"})
+    requests.get(
+        _construct_wmts_instance_url(settings),
+        params={"SERVICE": "WMTS", "REQUEST": "GetCapabilities"},
+    )
 
-    response = requests.get(_construct_wmts_instance_url(settings), params={"SERVICE": "WMTS", "REQUEST": "GetCapabilities"})
+    response = requests.get(
+        _construct_wmts_instance_url(settings),
+        params={"SERVICE": "WMTS", "REQUEST": "GetCapabilities"},
+    )
     root = ET.fromstring(response.content)
 
     # Namespaces used in the document
@@ -134,18 +140,22 @@ def construct_tiled_eo_image_with_wmts_metadata(
             f"Requested WMTS acquisition date: {data_request.acquired_at.isoformat() if data_request.acquired_at else 'None'}"
         )
 
-        start_timepoint = data_request.acquired_at.replace(hour=0, minute=0, second=0, microsecond=0)
+        start_timepoint = data_request.acquired_at.replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
         # FIXME: extending the time range is a hot fix for the fact that the
         # Sentinel 2 strips have gaps, so a single day is not enough for a
         # gap-less display:
-        timerange = TimeRange(start_timepoint=start_timepoint - timedelta(days=5),
-                              end_timepoint=start_timepoint + timedelta(days=1))
+        timerange = TimeRange(
+            start_timepoint=start_timepoint - timedelta(days=5),
+            end_timepoint=start_timepoint + timedelta(days=1),
+        )
 
         wmts_url = _construct_wmts_gettile_url(
             settings=settings,
             datetime_range=timerange,
             layer=data_request.wmts_layer,
-#            max_cc=data_request.max_cloud_cover,
+            #            max_cc=data_request.max_cloud_cover,
         )
     except Exception as exc:
         # can this happen at all? the URL construction is deterministic and should not fail AFAICS

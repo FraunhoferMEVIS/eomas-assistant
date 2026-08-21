@@ -88,9 +88,7 @@ def test_stac_overlay_layer_uses_restricted_titiler_url_and_serves_tilejson() ->
             assert isinstance(payload.get("tiles"), list)
             assert payload["tiles"]
 
-            traversal_response = client.get(
-                "/cog/WebMercatorQuad/tilejson.json?url=../outside.tif"
-            )
+            traversal_response = client.get("/cog/WebMercatorQuad/tilejson.json?url=../outside.tif")
             assert traversal_response.status_code == 403
 
             absolute_response = client.get(
@@ -143,9 +141,5 @@ def test_titiler_serves_real_png_tile_for_cached_geotiff() -> None:
             assert tile_response.headers.get("content-type", "").startswith("image/png")
             assert tile_response.content
 
-            blocked_response = client.get(
-                "/cog/tiles/WebMercatorQuad/0/0/0.png?url=../outside.tif"
-            )
+            blocked_response = client.get("/cog/tiles/WebMercatorQuad/0/0/0.png?url=../outside.tif")
             assert blocked_response.status_code == 403
-
-

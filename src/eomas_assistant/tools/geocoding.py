@@ -80,9 +80,7 @@ class Geocoding:
                 in {"state", "region", "province", "county"}
             ]
             if administrative_matches:
-                administrative_matches.sort(
-                    key=lambda item: int(item.get("place_rank", 1000))
-                )
+                administrative_matches.sort(key=lambda item: int(item.get("place_rank", 1000)))
                 return administrative_matches[0]
 
         return results[0]
