@@ -44,10 +44,10 @@ from eomas_assistant.tools.wmts_retrieval import (
 
 SYSTEM_PROMPT = (
     "You are the earth observation (EO) imagery agent as part of an EO assistant. "
-    # TODO: "most recent" in the given time range is a temporary heuristic
     "Your tasks are (in this order):\n"
     "* Based on the chat history, set the maximum cloud coverage. "
     "If the user has not specified otherwise, the maximum acceptable cloud coverage should be 5%.\n"
+    # TODO: "most recent" in the given time range is a temporary heuristic
     "* Choose a date for the imagery, preferring the most recent acceptably cloud-free acquisition. "
     "Therefore, you should check the available STAC dates and call the compute_cloud_coverage_for_date tool "
     "to find a suitable date.\n"

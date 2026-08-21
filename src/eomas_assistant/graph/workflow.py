@@ -146,11 +146,12 @@ class AgentWorkflow:
 
         result = graph.compile()
         if False:
+            # save visual representations of the workflow graph for debugging purposes:
             png = result.get_graph().draw_mermaid_png()
             print("saving workflow graph to graph_diagram.png")
             with open("graph_diagram.png", "wb") as f:
                 f.write(png)
-        if False:
+
             mm = result.get_graph().draw_mermaid()
             print("saving workflow graph to graph_diagram.mm")
             with open("graph_diagram.mm", "w") as f:
