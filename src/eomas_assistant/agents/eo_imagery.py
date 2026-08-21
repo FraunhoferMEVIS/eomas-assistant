@@ -281,7 +281,7 @@ def list_available_stac_asset_keys() -> dict:
 def compute_roi_statistics(
     runtime: ToolRuntime[None, AgentState],
     acquisition_date: str,
-    stac_asset_key: str,
+    stac_asset_key_or_index_name: str,
 ) -> dict[str, float]:
     """Compute statistics (mean, min, max, stddev) of the pixel values of the
     specified asset type inside the region of interest for a given acquisition
@@ -306,7 +306,7 @@ def compute_roi_statistics(
 
     return _compute_roi_statistics(
         stac_items=date_items,
-        stac_asset_key=stac_asset_key,
+        stac_asset_key_or_index_name=stac_asset_key_or_index_name,
         roi_geojson=roi,
     )
 
