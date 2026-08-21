@@ -25,5 +25,5 @@ def test_streamlit_app_renders_with_apptest(monkeypatch) -> None:
     assert at.title[0].value == "🛰️ EOMAS Assistant"
     assert len(at.caption) == 1
     assert at.caption[0].value == (
-        "Extensible multi-agent starter project for Earth Observability requests."
+        "Extensible agentic earth observation chat assistant"
     )

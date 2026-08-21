@@ -238,7 +238,7 @@ def main() -> None:
     st.set_page_config(page_title=settings.app_name, page_icon="🛰️", layout="centered")
     st.title(f"🛰️ {settings.app_name}")
     st.caption(
-        "Extensible multi-agent starter project for Earth Observability requests."
+        "Extensible agentic earth observation chat assistant"
     )
 
     st.markdown(

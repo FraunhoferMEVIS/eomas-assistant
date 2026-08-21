@@ -1,12 +1,14 @@
 # EOMAS Assistant
 
-Extensible multi-agent starter project for Earth Observability requests, built with:
+Extensible agentic chat assistant for Earth Observability requests, built with:
 
 - LangGraph for orchestration
 - Python 3.11+
 - Streamlit for the prototype UI
 - LLM backend via vLLM / Ollama server
-- Pydantic validation for agent outputs
+- Pydantic validation for LLM outputs
+- Rasterio / GDAL for geospatial data processing
+- Copernicus Data Space Ecosystem (CDSE) services for satellite imagery download & visualization
 
 This repository is licensed under the [BSD 3-Clause Clear License](LICENSE).
 

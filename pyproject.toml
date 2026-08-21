@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "eomas-assistant"
 version = "0.1.0"
-description = "Extensible LangGraph multi-agent earth observability assistant starter"
+description = "Extensible agentic earth observation chat assistant"
 readme = "README.md"
 license = { text = "BSD-3-Clause-Clear" }
 requires-python = ">=3.11,<3.13"
