@@ -185,18 +185,18 @@ class EOImageDownloader:
             scl_prob, cld_crs, cld_transform = self.download_and_merge_assets(scl_assets)
 
             SCL_CLOUD_PROBABILITY_LUT = [
-                0.0,  # 0: No data
-                0.0,  # 1: Saturated or defective
-                0.0,  # 2: Dark area pixels
-                10.0, # 3: Cloud shadows
-                0.0,  # 4: Vegetation
-                0.0,  # 5: Bare soils
-                0.0,  # 6: Water
-                5.0,  # 7: Clouds low probability / Unclassified
-                30.0, # 8: Clouds medium probability
-                100.0,# 9: Clouds high probability
-                5.0,  #10: Thin cirrus
-                0.0,  #11: Snow or ice
+                0.0,  #   0: No data
+                0.0,  #   1: Saturated or defective
+                0.0,  #   2: Dark area pixels
+                10.0,  #  3: Cloud shadows
+                0.0,  #   4: Vegetation
+                0.0,  #   5: Bare soils
+                0.0,  #   6: Water
+                5.0,  #   7: Clouds low probability / Unclassified
+                30.0,  #  8: Clouds medium probability
+                100.0,  # 9: Clouds high probability
+                5.0,  #  10: Thin cirrus
+                0.0,  #  11: Snow or ice
             ]
             cld_prob = np.take(SCL_CLOUD_PROBABILITY_LUT, scl_prob.astype(int))
 
