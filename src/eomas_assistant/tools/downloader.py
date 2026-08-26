@@ -5,6 +5,7 @@ from __future__ import annotations
 import collections
 import contextlib
 import logging
+import tempfile
 from pathlib import Path, PurePosixPath
 from urllib.parse import urlparse
 
@@ -12,7 +13,9 @@ import boto3
 import numpy as np
 import pystac
 import rasterio
+import rasterio.enums
 import rasterio.merge
+import rasterio.warp
 import rasterio.windows
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError, ProfileNotFound
 
@@ -118,15 +121,29 @@ class EOImageDownloader:
             logger.debug(f"Merging {len(datasets)} datasets, CRS: {crs}")
 
             if len(crs) > 1:
-                ((single_crs, _count),) = crs.most_common(1)
+                ((common_crs, _count),) = crs.most_common(1)
                 logger.debug(
-                    f"Cannot merge {len(datasets)} datasets, CRS differ: {crs} (selecting {single_crs})"
+                    f"Merging {len(datasets)} datasets requires warping, "
+                    f"CRS differ: {crs} (selecting {common_crs})"
                 )
-                datasets = [ds for ds in datasets if str(ds.crs) == single_crs]
 
-            # out_fd, out_path = mkstemp(prefix="merged", suffix=".tif", dir=CACHE_DIR)
-            # os.close(out_fd)  # Close the file descriptor; rasterio will handle the file
-            merged_data, merged_transform = rasterio.merge.merge(datasets)  # , dst_path=out_path)
+                require_warping = [ds for ds in datasets if str(ds.crs) != common_crs]
+                datasets = [ds for ds in datasets if str(ds.crs) == common_crs]
+
+                temp_dir = Path(stack.enter_context(tempfile.TemporaryDirectory()))
+                for i, ds in enumerate(require_warping):
+                    dest_profile = ds.profile.copy()
+                    dest_profile['crs'] = datasets[0].crs
+                    temp_path = temp_dir / f"warped_{i}.tif"
+                    with rasterio.open(temp_path, "w", **dest_profile) as dest_dataset:
+                        rasterio.warp.reproject(
+                            source=rasterio.band(ds, list(range(1, ds.count + 1))),
+                            destination=rasterio.band(dest_dataset, list(range(1, ds.count + 1))),
+                            resampling=rasterio.enums.Resampling.bilinear,
+                        )
+                    datasets.append(stack.enter_context(rasterio.open(temp_path)))
+
+            merged_data, merged_transform = rasterio.merge.merge(datasets)
 
         return merged_data, datasets[0].crs, merged_transform
 
