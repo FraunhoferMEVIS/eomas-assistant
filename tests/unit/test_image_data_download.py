@@ -2,11 +2,9 @@
 
 import unittest
 from datetime import UTC, datetime
-from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
 
-import rasterio
 from botocore.exceptions import ProfileNotFound
 from pystac_client import ItemSearch
 
