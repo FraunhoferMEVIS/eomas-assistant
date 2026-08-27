@@ -45,6 +45,8 @@ class AppSettings(BaseSettings):
     titiler_base_url: str = "http://127.0.0.1:8000"
     stac_cache_root: str = "cache"
 
+    carto_api_key: str | None = None
+
     @model_validator(mode="after")
     def validate_ca_bundle_paths(self) -> AppSettings:
         """Fail fast on startup if configured CA bundle files are missing."""

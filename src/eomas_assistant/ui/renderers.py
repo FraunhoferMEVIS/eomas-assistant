@@ -336,9 +336,7 @@ def _build_map_component_key(
 ) -> str:
     """Return a stable unique key for a rendered folium component."""
 
-    digest = sha256(
-        f"{response.request_id}:{output_index}:{output.title}".encode()
-    ).hexdigest()
+    digest = sha256(f"{response.request_id}:{output_index}:{output.title}".encode()).hexdigest()
     return f"map-{digest}"
 
 
@@ -348,10 +346,23 @@ def _build_map(
     stac_images: list[LocalEOImage],
 ) -> folium.Map:
     """Build a folium map with optional EO tile overlay and geography layers."""
+
+    settings = get_settings()
+    if settings.carto_api_key:
+        tiles = f"https://{{s}}.basemaps.cartocdn.com/rastertiles/voyager/{{z}}/{{x}}/{{y}}.png?key={settings.carto_api_key}"
+        attr = (
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> '
+            'contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        )
+    else:
+        tiles = "CartoDB positron"
+        attr = None  # folium will use the default attribution for this tile layer
+
     map_obj = folium.Map(
         location=[output.center_latitude, output.center_longitude],
         zoom_start=output.zoom,
-        tiles="CartoDB positron",
+        tiles=tiles,
+        attr=attr,
         control_scale=True,
     )
     Fullscreen(position="topright", title="Fullscreen", title_cancel="Exit Fullscreen").add_to(
