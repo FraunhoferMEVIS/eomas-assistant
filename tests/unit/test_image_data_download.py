@@ -171,6 +171,37 @@ class TestDownloader(unittest.TestCase):
         data, crs, transform = downloader.download_and_merge_assets(stac_assets)
 
 
+    def test_download_and_merge_with_varying_crs(self):
+        # ESA centre for earth observation covers grid codes T33TUG, T33TTG,
+        # T32TQM and lies on the border between EPSG:32633 and EPSG:32632 CRS.
+        # Hence, it requires warping for merging the image datasets.
+        bbox_wgs84 = BoundingBox(
+            min_latitude=41.8260729,
+            min_longitude=12.6712231,
+            max_latitude=41.8287707,
+            max_longitude=12.6767863,
+        )
+
+        stac_items = list(
+            find_sentinel2_assets_in_time_range(
+                bbox_wgs84=bbox_wgs84,
+                datetime_range=TimeRange(
+                    start_timepoint=datetime(2026, 8, 24, 0, 0, 0, tzinfo=UTC),
+                    end_timepoint=datetime(2026, 8, 24, 23, 59, 59, tzinfo=UTC),
+                ),
+                max_cloud_cover=None,
+                max_items=20,
+            ).item_collection()
+        )
+        assert len(stac_items) == 3
+
+        downloader = EOImageDownloader()
+        stac_assets = downloader.find_assets_by_key(stac_items, asset_key="TCI_20m")
+
+        _data, crs, _transform = downloader.download_and_merge_assets(stac_assets)
+        assert str(crs) == "EPSG:32633"
+
+
 class TestWmtsLayerDiscovery(unittest.TestCase):
     def test_request_available_wmts_layers_returns_multiple_layers(self):
         layers = request_available_wmts_layers()

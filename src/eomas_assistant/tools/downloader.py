@@ -132,8 +132,26 @@ class EOImageDownloader:
 
                 temp_dir = Path(stack.enter_context(tempfile.TemporaryDirectory()))
                 for i, ds in enumerate(require_warping):
+                    dst_crs = datasets[0].crs
+
+                    dst_transform, dst_width, dst_height = (
+                        rasterio.warp.calculate_default_transform(
+                            ds.crs,
+                            dst_crs,
+                            ds.width,
+                            ds.height,
+                            *ds.bounds,
+                        )
+                    )
+
                     dest_profile = ds.profile.copy()
-                    dest_profile['crs'] = datasets[0].crs
+                    dest_profile.update(
+                        crs=dst_crs,
+                        transform=dst_transform,
+                        width=dst_width,
+                        height=dst_height,
+                    )
+
                     temp_path = temp_dir / f"warped_{i}.tif"
                     with rasterio.open(temp_path, "w", **dest_profile) as dest_dataset:
                         rasterio.warp.reproject(
