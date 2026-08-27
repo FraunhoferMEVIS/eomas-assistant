@@ -2,9 +2,9 @@
 
 from langchain_core.messages import AIMessage, HumanMessage
 
-from eomas_assistant.agents.evaluator import EvaluatorAgent
 from eomas_assistant.models.response_models import AgentResponse, MapResponseItem, TextResponseItem
 from eomas_assistant.models.schemas import BoundingBox, EvaluationResult, TiledEOImage
+from eomas_assistant.nodes.evaluator import EvaluatorAgent
 
 
 def test_evaluator_includes_wmts_and_stac_band_metadata_in_prompt(mocker) -> None:
@@ -23,7 +23,7 @@ def test_evaluator_includes_wmts_and_stac_band_metadata_in_prompt(mocker) -> Non
         )
 
     mocker.patch(
-        "eomas_assistant.agents.evaluator.llm_helper.call_llm_with_schema",
+        "eomas_assistant.nodes.evaluator.llm_helper.call_llm_with_schema",
         side_effect=_fake_call_llm_with_schema,
     )
 
@@ -112,7 +112,7 @@ def test_evaluator_prompt_prioritizes_latest_request_over_older_context(mocker) 
         )
 
     mocker.patch(
-        "eomas_assistant.agents.evaluator.llm_helper.call_llm_with_schema",
+        "eomas_assistant.nodes.evaluator.llm_helper.call_llm_with_schema",
         side_effect=_fake_call_llm_with_schema,
     )
 

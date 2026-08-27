@@ -2,8 +2,8 @@
 
 from langchain_core.messages import AIMessage, HumanMessage
 
-from eomas_assistant.agents.orchestrator import OrchestratorAgent
 from eomas_assistant.models.schemas import OrchestratorPlan
+from eomas_assistant.nodes.orchestrator import OrchestratorAgent
 
 
 class DummyResponse:
@@ -109,7 +109,7 @@ def test_orchestrator_includes_conversation_context_in_prompt(mocker) -> None:
         )
 
     mocker.patch(
-        "eomas_assistant.agents.orchestrator.llm_helper.call_llm_with_schema",
+        "eomas_assistant.nodes.orchestrator.llm_helper.call_llm_with_schema",
         side_effect=_fake_call_llm_with_schema,
     )
     agent = OrchestratorAgent(llm_client=DummyChatOllama("{}"))  # type: ignore

@@ -10,16 +10,16 @@ from langgraph.graph import END, START, StateGraph
 from langgraph.graph.state import CompiledStateGraph
 from langgraph.prebuilt import ToolNode
 
-from eomas_assistant.agents.conversation import ConversationAgent
-from eomas_assistant.agents.eo_imagery import EO_IMAGERY_TOOLS, EOImageryAgent
-from eomas_assistant.agents.evaluator import EvaluatorAgent
-from eomas_assistant.agents.geography import GeographyAgent
-from eomas_assistant.agents.orchestrator import OrchestratorAgent
 from eomas_assistant.config.settings import AppSettings, get_settings
 from eomas_assistant.graph.state import AgentState
 from eomas_assistant.graph.workflow_streamer import WorkflowStreamer
 from eomas_assistant.llm import create_llm_client, llm_helper
 from eomas_assistant.models.response_models import AgentResponse, TextResponseItem
+from eomas_assistant.nodes.conversation import ConversationAgent
+from eomas_assistant.nodes.eo_imagery import EO_IMAGERY_TOOLS, EOImageryAgent
+from eomas_assistant.nodes.evaluator import EvaluatorAgent
+from eomas_assistant.nodes.geography import GeographyAgent
+from eomas_assistant.nodes.orchestrator import OrchestratorAgent
 from eomas_assistant.tools.geocoding import Geocoding
 
 

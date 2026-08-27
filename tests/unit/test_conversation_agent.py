@@ -2,8 +2,8 @@
 
 from langchain_core.messages import AIMessage, HumanMessage
 
-from eomas_assistant.agents.conversation import ConversationAgent
 from eomas_assistant.models.response_models import TextResponseItem
+from eomas_assistant.nodes.conversation import ConversationAgent
 
 
 def test_conversation_agent_answers_ndvi_purpose_question(mocker) -> None:

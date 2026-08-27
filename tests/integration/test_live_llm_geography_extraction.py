@@ -7,11 +7,11 @@ from datetime import date
 import pytest
 from langchain_core.messages import HumanMessage
 
-from eomas_assistant.agents.geography import GeographyAgent
 from eomas_assistant.config.settings import AppSettings
 from eomas_assistant.graph.workflow import AgentWorkflow
 from eomas_assistant.llm import create_llm_client
 from eomas_assistant.models.response_models import MapResponseItem
+from eomas_assistant.nodes.geography import GeographyAgent
 from eomas_assistant.tools.geocoding import Geocoding
 
 
