@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Streamlit app",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "streamlit",
+      "args": [
+        "run",
+        "src/eomas_assistant/app/streamlit_app.py",
+        "--server.port",
+        "8501"
+      ],
+      "cwd": "${workspaceFolder}",
+      "env": {
+        "PYTHONPATH": "${workspaceFolder}/src",
+        "STAC_CACHE_ROOT": "cache",
+        "TITILER_BASE_URL": "http://127.0.0.1:8000"
+      },
+      "console": "integratedTerminal",
+      "justMyCode": false
+    }
+  ]
+}
