@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from datetime import date
 import re
+from datetime import date
 
 import pytest
 from langchain_core.messages import HumanMessage
@@ -146,11 +146,11 @@ def test_live_vllm_workflow_computes_mean_ndvi_of_oldenburg() -> None:
     response = state.get("response")
     assert response is not None
 
-    response_texts = [
-        item.content for item in response.items if isinstance(item, TextResponseItem)
-    ]
+    response_texts = [item.content for item in response.items if isinstance(item, TextResponseItem)]
     assert response_texts
-    assert re.search(r"(mean|average).*\bNDVI\b.* 0\.[0-9]", " ".join(response_texts), re.IGNORECASE)
+    assert re.search(
+        r"(mean|average).*\bNDVI\b.* 0\.[0-9]", " ".join(response_texts), re.IGNORECASE
+    )
 
 
 @pytest.mark.skip(reason="Implementation of longitudinal analysis not finished yet")
