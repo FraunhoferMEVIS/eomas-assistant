@@ -23,7 +23,6 @@ from eomas_assistant.models.response_models import (
 )
 from eomas_assistant.models.schemas import (
     BoundingBox,
-    GeographySummary,
     GeoLocation,
     ResponseItemType,
     StrictBaseModel,
@@ -33,12 +32,6 @@ from eomas_assistant.tools.geocoding import Geocoding
 
 logger = logging.getLogger(__name__)
 
-
-GEOGRAPHY_SUMMARY_SYSTEM_PROMPT = (
-    "You are a geography assistant for earth observability workflows. "
-    "Produce a summary that consists of 2-4 concise sentences"
-    " and includes location and coordinates."
-)
 
 GEOGRAPHY_EXTRACTION_SYSTEM_PROMPT = (
     "You should extract candidates for geographical locations and a"
@@ -180,11 +173,12 @@ class GeographyAgent:
                 schema_model=GeographyExtraction,
                 call_site="geography.extract_location_and_time",
                 supplemental_prompt=(
-                    "Extract location candidates and time range if given in the latest "
+                    "Extract location candidates and time range if given from the latest "
                     "user message in the conversation above."
                 ),
             )
-        except Exception:
+        except Exception as exc:
+            logger.exception("Exception occurred while extracting location and time", exc_info=exc)
             return [cleaned], None
 
         candidates: list[str] = []
@@ -305,11 +299,6 @@ class GeographyAgent:
     ) -> AgentResponse:
         """Build the response payload for a resolved location."""
 
-        summary = self._create_summary(
-            user_query=user_query,
-            location=location,
-            messages=messages,
-        )
         zoom = (
             self._compute_zoom_from_bbox(location.bbox_wgs84_lat_lon)
             if location.bbox_wgs84_lat_lon
@@ -317,7 +306,6 @@ class GeographyAgent:
         )
         response_items = self._build_response_items_for_mode(
             outputs=outputs,
-            summary=summary,
             location=location,
             zoom=zoom,
         )
@@ -348,32 +336,29 @@ class GeographyAgent:
     def _build_response_items_for_mode(
         self,
         outputs: list[ResponseItemType],
-        summary: str,
         location: GeoLocation,
         zoom: int,
     ) -> list[TextResponseItem | MapResponseItem | ErrorResponseItem]:
         """Build user-visible outputs for the requested response mode."""
 
-        map_response = MapResponseItem(
-            title=f"Location map: {location.name}",
-            center_latitude=location.latitude,
-            center_longitude=location.longitude,
-            zoom=zoom,
-            points=[
-                MapPoint(
-                    latitude=location.latitude,
-                    longitude=location.longitude,
-                    label=location.display_name,
-                )
-            ],
-            geojson=location.geojson,
-        )
-
         rendered_responses: list[TextResponseItem | MapResponseItem | ErrorResponseItem] = []
-        if "text" in outputs:
-            rendered_responses.append(TextResponseItem(content=summary))
         if "map" in outputs:
-            rendered_responses.append(map_response)
+            rendered_responses.append(
+                MapResponseItem(
+                    title=f"Location map: {location.name}",
+                    center_latitude=location.latitude,
+                    center_longitude=location.longitude,
+                    zoom=zoom,
+                    points=[
+                        MapPoint(
+                            latitude=location.latitude,
+                            longitude=location.longitude,
+                            label=location.display_name,
+                        )
+                    ],
+                    geojson=location.geojson,
+                )
+            )
         return rendered_responses
 
     def _compute_zoom_from_bbox(self, bbox: BoundingBox) -> int:
@@ -404,41 +389,3 @@ class GeographyAgent:
             if location is not None:
                 return location, attempts
         return None, attempts
-
-    def _create_summary(
-        self,
-        user_query: str,
-        location: GeoLocation,
-        messages: Sequence[AnyMessage],
-    ) -> str:
-        """Generate a short geographic summary for chat output.
-
-        Falls back to a deterministic response when the configured LLM is not
-        reachable or returns an error.
-        """
-
-        supplemental_prompt = (
-            f"Question: {user_query}\n"
-            f"Resolved place: {location.display_name}\n"
-            f"Latitude: {location.latitude}\n"
-            f"Longitude: {location.longitude}\n"
-            "Provide a concise answer suitable for a chat UI."
-        )
-        try:
-            summary = llm_helper.call_llm_with_schema(
-                llm=self._llm_client,
-                system_prompt=GEOGRAPHY_SUMMARY_SYSTEM_PROMPT,
-                messages=messages,
-                schema_model=GeographySummary,
-                call_site="geography.create_summary",
-                supplemental_prompt=supplemental_prompt,
-            )
-        except Exception:
-            summary = GeographySummary(
-                summary=(
-                    f"{location.name} is located at latitude {location.latitude:.5f} and "
-                    f"longitude {location.longitude:.5f}. "
-                    f"Resolved place: {location.display_name}."
-                )
-            )
-        return summary.summary.strip()

@@ -20,7 +20,7 @@ from langgraph.types import Command
 
 from eomas_assistant.graph.state import AgentState
 from eomas_assistant.llm import llm_helper
-from eomas_assistant.models.response_models import MapResponseItem
+from eomas_assistant.models.response_models import MapResponseItem, TextResponseItem
 from eomas_assistant.models.schemas import (
     AssetCatalog,
     DataRequest,
@@ -42,6 +42,9 @@ from eomas_assistant.tools.wmts_retrieval import (
     request_available_wmts_layers,
 )
 
+# TODO: maybe this could be a) extracted into a separate text file and b)
+# extended via a templating engine (jinja2?) to include the current state (e.g.,
+# the selected WMTS layer) for guiding the LLM
 SYSTEM_PROMPT = (
     "You are the earth observation (EO) imagery agent as part of an EO assistant. "
     "Your tasks are (in this order):\n"
@@ -66,6 +69,8 @@ SYSTEM_PROMPT = (
     "and for the others you should use your best judgment to find the most appropriate"
     " WMTS layer to use as illustration "
     "while computing statistics for the requested STAC asset key. "
+    "In the end, output a brief, precise reply to the user that answers their question "
+    "and describes the selected imagery and any relevant statistics. "
 )
 
 
@@ -366,6 +371,12 @@ class EOImageryAgent:
             data_request=state.data_request,
             messages=state.messages,
         )
+
+        assert state.plan
+        if not ai_message.tool_calls and "text" in state.plan.expected_response_items:
+            result["response"] = dict(
+                additional_items=[TextResponseItem(content=llm_helper.get_plain_text(ai_message))],
+            )
 
         return dict(messages=[ai_message], **result)
 

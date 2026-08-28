@@ -88,16 +88,6 @@ class EvaluationResult(StrictBaseModel):
     )
 
 
-# FIXME: We really don't need structured output for a single text summary
-class GeographySummary(StrictBaseModel):
-    """Stores a concise generated summary for a geography answer"""
-
-    summary: str = Field(
-        min_length=1,
-        description="Short natural-language summary of the resolved geography result",
-    )
-
-
 class AssetCatalog(StrictBaseModel):
     """Structured information on discovered EO assets for a resolved geo/time request"""
 

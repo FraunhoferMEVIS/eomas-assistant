@@ -7,7 +7,6 @@ from langchain_core.messages import HumanMessage
 from eomas_assistant.models.response_models import MapResponseItem
 from eomas_assistant.models.schemas import (
     BoundingBox,
-    GeographySummary,
     GeoLocation,
     TimeRange,
 )
@@ -64,7 +63,6 @@ def test_geography_agent_extracts_location_bbox_and_time_range(mocker) -> None:
                 start_timepoint=time_range.start_timepoint,
                 end_timepoint=time_range.end_timepoint,
             ),
-            GeographySummary(summary="Bremen summary."),
         ],
     )
 
@@ -126,7 +124,6 @@ def test_geography_agent_sets_zoom_from_bbox(mocker) -> None:
                 start_timepoint=None,
                 end_timepoint=None,
             ),
-            GeographySummary(summary="Bremen summary."),
         ],
     )
 
@@ -158,7 +155,6 @@ def test_geography_agent_uses_point_zoom_without_area_geometry(mocker) -> None:
                 start_timepoint=None,
                 end_timepoint=None,
             ),
-            GeographySummary(summary="Bremen summary."),
         ],
     )
 
@@ -200,7 +196,6 @@ def test_geography_agent_reuses_prior_location_when_location_missing(mocker) -> 
                 start_timepoint=updated_time_range.start_timepoint,
                 end_timepoint=updated_time_range.end_timepoint,
             ),
-            GeographySummary(summary="Bremen summary."),
         ],
     )
 
@@ -249,7 +244,6 @@ def test_geography_agent_defaults_to_recent_time_range_when_time_missing(mocker)
                 start_timepoint=None,
                 end_timepoint=None,
             ),
-            GeographySummary(summary="Hamburg summary."),
         ],
     )
 

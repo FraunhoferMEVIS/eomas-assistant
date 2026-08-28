@@ -88,6 +88,10 @@ class AgentResponse(BaseModel):
                         stac_image["roi_cc"] = roi_cc
                         break
 
+        additional_items = updates_or_response.pop("additional_items", None)
+        if additional_items:
+            response.items.extend(additional_items)
+
         new_metadata.update(updates_or_response)
 
         return AgentResponse(
