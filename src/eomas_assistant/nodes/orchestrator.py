@@ -28,14 +28,15 @@ SYSTEM_PROMPT = (
     " cloud cover, Sentinel imagery, vegetation, land cover, terrain, and map-based"
     " follow-up questions. "
     "When the user primarily wants explanation, discussion, or interpretation,"
-    " prefer `outputs`=[text]. "
+    " prefer `expected_response_items`=[text]. "
     "When the user primarily wants a visual result, map display, or imagery layer,"
-    " prefer `outputs`=[map]. "
-    "When the user wants both explanation and visualization, set `outputs`=[text, map]. "
+    " prefer `expected_response_items`=[map]. "
+    "When the user wants both explanation and visualization, "
+    "set `expected_response_items`=[text, map]. "
     "For follow-up questions such as 'Now in NDVI', 'Use the same area in 2021',"
     " or 'Show the same scene with less cloud cover', use the conversation"
     " context to resolve omitted references. "
-    "Return `unsupported` only when the current request is clearly outside that domain. "
+    "Route to `unsupported` only when the current request is clearly outside that domain. "
 )
 
 
