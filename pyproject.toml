@@ -50,6 +50,14 @@ markers = [
   "integration: tests that call real external services (LLM/geocoding)",
 ]
 
+[tool.coverage.run]
+omit = [
+  # we do have a test for the streamlit app, but it does not achieve to test the
+  # chat display; for coverage, this is not a big deal, since every interactive
+  # use tests that frontend code, and we rather want to focus on the backend:
+  "src/eomas_assistant/app/streamlit_app.py",
+]
+
 [tool.ruff]
 line-length = 100
 target-version = "py311"
