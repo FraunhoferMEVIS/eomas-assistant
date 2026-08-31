@@ -10,13 +10,17 @@ true color image.  By default, cloud-free imagery is preferred (max. 5% cloud
 coverage, measured within the target region of interest, *not on the underlying
 asset level*).
 
-![Screencast of EOMAS Assistant with a simple example query just mentioning a location, implying a request for a recent, cloud-free, true-color image](images/simple_screencast.mp4)
+![Screenshot of a basic query result](images/eomas_paris.png)
 
 The Copernicus Data Space Ecosystem (CDSE) is used for imagery-related services:
 Cloud cover is checked based on the cloud probability asset if available (recent
 imagery) or the scene classification asset (2025 or earlier dates). The WMTS
 service is used for map rendering, while the STAC API is used to query assets
 that are then downloaded and analyzed locally depending on the user's query.
+
+An screencast of a simple example query just mentioning a location, implying a
+request for a recent, cloud-free, true-color image can be found in
+[images/simple_screencast.mp4](images/simple_screencast.mp4).
 
 The EOMAS Assistant is built with:
 
@@ -26,6 +30,7 @@ The EOMAS Assistant is built with:
 - LLM backend via vLLM / Ollama server
 - Pydantic validation for LLM outputs
 - Rasterio / GDAL for geospatial data processing
+- Titiler for serving merged and warped EO imagery (WIP)
 
 This repository is licensed under the [BSD 3-Clause Clear License](LICENSE).
 
@@ -187,3 +192,21 @@ than necessary, without providing benefits in terms of modularity or
 maintainability.  As it stands, we would have to introduce a lot more
 communication between the agents in order to organize the responsibilities and
 not lose information.
+
+### Cache never cleared
+
+The prototype caches downloaded STAC frames in a "cache" directory, but this
+cache is never cleared automatically, which may lead to excessive disk usage
+over time.  (Just remove the directory manually as you please.)  Files are
+touched on use already, so it would not be hard to implement a cache eviction
+policy.
+
+### Titiler integration not working
+
+The Titiler integration was an experimental feature that was developed before
+the EO imagery agent could actually merge and warp all necessary image frames
+for a given user request. As a result of larger code changes, it was temporarily
+disabled, although it would not be much work to get running again.  The merged
+images would have to be saved to disk before being served by Titiler.  (Note
+that `rasterio.merge.merge()` either returns the merged array *or* writes it to
+disk, so it would have to be loaded from that file again also for analysis.)
