@@ -1,8 +1,24 @@
 # EOMAS Assistant
 
+This is an extensible agentic chat assistant for Earth Observability requests
+which currently supports satellite imagery retrieval and visualization,
+extracting the intent from user queries, and orchestrating various tools to
+fulfill those requests.  The location is looked up via Nominatim from
+OpenStreetMap.  The desired time range can be specified and defaults to the most
+recent imagery.  A specific band or index (NDVI) can be specified, default is a
+true color image.  By default, cloud-free imagery is preferred (max. 5% cloud
+coverage, measured within the target region of interest, *not on the underlying
+asset level*).
+
 ![Screencast of EOMAS Assistant with a simple example query just mentioning a location, implying a request for a recent, cloud-free, true-color image](images/simple_screencast.mp4)
 
-Extensible agentic chat assistant for Earth Observability requests, built with:
+The Copernicus Data Space Ecosystem (CDSE) is used for imagery-related services:
+Cloud cover is checked based on the cloud probability asset if available (recent
+imagery) or the scene classification asset (2025 or earlier dates). The WMTS
+service is used for map rendering, while the STAC API is used to query assets
+that are then downloaded and analyzed locally depending on the user's query.
+
+The EOMAS Assistant is built with:
 
 - LangGraph for orchestration
 - Python 3.11+
@@ -10,7 +26,6 @@ Extensible agentic chat assistant for Earth Observability requests, built with:
 - LLM backend via vLLM / Ollama server
 - Pydantic validation for LLM outputs
 - Rasterio / GDAL for geospatial data processing
-- Copernicus Data Space Ecosystem (CDSE) services for satellite imagery download & visualization
 
 This repository is licensed under the [BSD 3-Clause Clear License](LICENSE).
 
