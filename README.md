@@ -151,3 +151,22 @@ The state passed through the graph comprises the user query, message history, an
 - Then, it creates a `DataRequest` with the necessary information for the WMTS imagery overlay.
 - Several agents may augment the `response` with things (text, map, tabular information for plotting etc.) to be rendered in the UI.
 - The `EvaluatorAgent` is responsible for the `evaluation` part of the state, which is used to determine whether the request has been successfully answered or whether it should be re-routed.
+
+## Limitations
+
+### Missing context window management
+
+Ideally, the app would configure/know how big the LLM context window is,
+compact/trim message history, and detect when e.g. a tool call result or message
+history is too big. As it stands now, depending on the LLM provider, it may cut
+off exceeding tokens silently and output quality deteriorates.
+
+### MAS Limitations
+
+As already stated above, we found that a multi-agent system (MAS) is not only
+not necessary for this prototype, but in fact counterproductive. The initial MAS
+approach causes more LLM calls (higher computational cost, increased latency)
+than necessary, without providing benefits in terms of modularity or
+maintainability.  As it stands, we would have to introduce a lot more
+communication between the agents in order to organize the responsibilities and
+not lose information.
