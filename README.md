@@ -1,5 +1,7 @@
 # EOMAS Assistant
 
+![Screencast of EOMAS Assistant with a simple example query just mentioning a location, implying a request for a recent, cloud-free, true-color image](images/simple_screencast.mp4)
+
 Extensible agentic chat assistant for Earth Observability requests, built with:
 
 - LangGraph for orchestration
@@ -32,7 +34,7 @@ Finally, it is also possible to use other LLMs, but note that the behavior varie
 
 ### Setup
 
-#### 1. Install dependencies:
+#### 1. Install dependencies
 
 ```powershell
 uv sync --all-extras
@@ -97,7 +99,7 @@ uv run mypy src
 
 We have initially sketched a multi-agent system architecture for EOMAS, which is
 shown in the following diagram:
-![Architecture](architecture.png)
+![Architecture](images/architecture.png)
 
 Our current implementation is a simplified version of this architecture, and we
 plan to further simplify it towards a single-agent system.  We found that a MAS
