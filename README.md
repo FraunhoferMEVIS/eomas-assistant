@@ -22,6 +22,20 @@ An screencast of a simple example query just mentioning a location, implying a
 request for a recent, cloud-free, true-color image can be found in
 [images/simple_screencast.mp4](images/simple_screencast.mp4).
 
+This repository is licensed under the [BSD 3-Clause Clear License](LICENSE).
+
+## Project Background
+
+The EOMAS project was funded by the European Space Agency, through the
+"Sprint4EO" project (managed by OHB Digital Services) that spawned a series of
+small sprint projects (6 months each) with companies and institutions who were
+not yet familiar with earth observation, the goal being to bring cutting edge
+technology and ideas from other domains into EO.  EOMAS ended in August 2026,
+and this assistant is the final resulting demonstrator.  No major continuation
+of this development should be expected at this point.
+
+### Technology Stack
+
 The EOMAS Assistant is built with:
 
 - LangGraph for orchestration
@@ -31,8 +45,6 @@ The EOMAS Assistant is built with:
 - Pydantic validation for LLM outputs
 - Rasterio / GDAL for geospatial data processing
 - Titiler for serving merged and warped EO imagery (WIP)
-
-This repository is licensed under the [BSD 3-Clause Clear License](LICENSE).
 
 ### LLM
 
@@ -74,11 +86,15 @@ SENTINEL_HUB_INSTANCE_ID=<your_instance_id>
 ...
 ```
 
+<!--
 #### 4. Start TiTiler (required for STAC frame layers on the map)
+
+This can be skipped at the moment, since only the WMTS service is currently used for map overlays, see "Limitations" below.
 
 ```bash
 uv run python -m uvicorn eomas_assistant.app.titiler_app:app --host 0.0.0.0 --port 8000
 ```
+-->
 
 ### Run the App
 
