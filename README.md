@@ -103,9 +103,7 @@ Our current implementation is a simplified version of this architecture, and we
 plan to further simplify it towards a single-agent system.  We found that a MAS
 is not a good fit for this use case, where we would have to introduce a lot more
 communication between the agents in order to organize the responsibilities and
-not lose information.  At the time of writing, it may happen that the geography
-agent already hallucinates a response to questions that would actually require
-image processing in a later step, for instance.
+not lose information.
 
 ### Workflow Graph
 
