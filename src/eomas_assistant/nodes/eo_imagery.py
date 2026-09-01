@@ -390,7 +390,7 @@ class EOImageryAgent:
         system_prompt = SYSTEM_PROMPT
         supplemental_prompt = (
             f"The WMTS layer currently selected for display is {repr(data_request.wmts_layer)}."
-            if data_request
+            if data_request and data_request.wmts_layer
             else "No WMTS layer is currently selected; set_selected_wmts_layer needs to be called."
         )
         llm_input = llm_helper.build_model_input_messages(
