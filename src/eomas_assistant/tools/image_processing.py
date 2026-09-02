@@ -55,7 +55,8 @@ def compute_derived_index(
     mir_data = base_data["B12_20m"]
 
     # Compute NDVI
-    ndvi = (mir_data - nir_data) / (mir_data + nir_data)
+    div0_mask = np.logical_and(mir_data == 0, nir_data == 0)
+    ndvi = (mir_data - nir_data) / np.where(div0_mask, 1, mir_data + nir_data)
 
     assert result_crs is not None
     assert result_transform is not None
