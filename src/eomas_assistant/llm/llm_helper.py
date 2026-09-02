@@ -58,7 +58,7 @@ def build_model_input_messages(
         *list(messages),
     ]
     if supplemental_prompt and supplemental_prompt.strip():
-        input_messages.append(HumanMessage(content=supplemental_prompt.strip()))
+        input_messages.append(SystemMessage(content=supplemental_prompt.strip()))
     for message in input_messages:
         logger.debug(
             "LLM input %s: %s",
@@ -76,7 +76,9 @@ def call_llm_with_schema(
     call_site: str = "unknown",
     supplemental_prompt: str | None = None,
 ) -> SchemaModel:
-    """Run a structured LLM call and validate the result against a Pydantic schema."""
+    """Run a structured LLM call and validate the result against a Pydantic schema.
+    The `call_site` is used for logging only.
+    """
 
     llm_input = build_model_input_messages(
         system_prompt=system_prompt,
