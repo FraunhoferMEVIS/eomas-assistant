@@ -48,11 +48,13 @@ The EOMAS Assistant is built with:
 
 ### LLM
 
-We currently use the [EVE-Instruct](https://huggingface.co/eve-esa/EVE-Instruct) version of [ESA's EVE LLM](https://eve.philab.esa.int/about) (earth virtual expert, fine-tuned from Mistral-Small-3.2-24B-Instruct-2506), served via a vLLM server hosted in-house (at MEVIS).
+Most of the time, we have been using the [EVE-Instruct](https://huggingface.co/eve-esa/EVE-Instruct) version of [ESA's EVE LLM](https://eve.philab.esa.int/about) (earth virtual expert, fine-tuned from Mistral-Small-3.2-24B-Instruct-2506), served via a vLLM server hosted in-house (at MEVIS).
 
 We initially used a [quantized version of EVE](https://huggingface.co/jejwalsh/EVE-Instruct-GGUF) (Q8) in GGUF format, served via [Ollama](https://ollama.com/), but that combination did not support tool calls.
 
-Finally, it is also possible to use other LLMs, but note that the behavior varies between models.  For instance, we found that while gpt-5.6-luna often makes better (more consistent) use of the provided tools, the geography extraction is less reliable than with EVE-Instruct with the same prompt (which was developed for EVE).
+With this code, it is quite easy to use other LLMs (by editing the .env file), but note that the behavior varies between models.  We noticed several times that more powerful models uncovered problems with the prompts that were originally designed for EVE-Instruct.
+
+Today, we have to recommend a more powerful model than EVE-Instruct; not only does EVE hallucinate cloud cover too often (just selecting dates without computing the cloud cover first, or despite having seen the high CC), but it also repeatedly produced syntactically illegal tool calls in our integration tests.  GLM-5.2 is a reliable, self-hostable alternative that we tested successfully.
 
 -----------------
 
